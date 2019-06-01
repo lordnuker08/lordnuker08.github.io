@@ -22,14 +22,13 @@
             <button type="submit" v-on:click="fetchPlayerData" name="go" id="go">
                 <i class="fa fa-search"></i>
             </button>
-            <span class="loading-info">{{infoMessage}}</span>
         </div>
     </div>
     <div id="app-tabs" class="container">
         <div class="tabs">
-            <a v-on:click="activetab=1" v-bind:class="[ activetab === 1 ? 'active' : '' ]">Player Info</a>
-            <a v-on:click="activetab=2" v-bind:class="[ activetab === 2 ? 'active' : '' ]">Activities</a>
-            <a v-on:click="activetab=3" v-bind:class="[ activetab === 3 ? 'active' : '' ]">Charts</a>
+            <a v-on:click="activetab=1"  v-bind:class="[ activetab === 1 ? 'active' : '' ]">Player Info</a>
+            <a v-on:click="activetab=2"  v-bind:class="[ (activetab === 2 || !isLoadingComplete) ? 'active' : '' ]">Activities</a>
+            <a v-on:click="chartTabClicked" v-bind:class="[ (activetab === 3 || !isLoadingComplete) ? 'active' : '' ]">Charts</a>
         </div>
 
         <div class="content">
@@ -124,7 +123,7 @@
             </div>
             <div v-if="activetab === 3" class="tabcontent">
                 <div id="charts">
-                    <button type="submit" name="draw-charts" id="draw-charts" v-on:click="drawActivitySummaryGraph">Draw Charts</button>
+<!--                    <button type="submit" name="draw-charts" id="draw-charts" v-on:click="drawActivitySummaryGraph">Draw Charts</button>-->
                     <canvas id="summary-chart" height="400"></canvas>
                     <canvas id="pvp-summary-chart" height="400"></canvas>
                 </div>

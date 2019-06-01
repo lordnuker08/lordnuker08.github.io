@@ -24,7 +24,15 @@ var config = {
             return true;
         }
     },
-    methods: {}
+    methods: {
+        chartTabClicked : function () {
+            this.activetab = 3;
+            // Slow tab switch
+            setTimeout( function() {
+                drawActivitySummaryGraph();
+            }, 500);
+        }
+    }
 };
 
 function prepareConfig($, $document) {
@@ -128,9 +136,9 @@ function prepareConfig($, $document) {
     config.methods.fetchPlayerData = function() {
         this.activities = [];
         this.characterIds = [];
-        var searchTerm = this.searchTerm;
+        var searchTerm = config.data.searchTerm.trim();
 
-        if(searchTerm.trim().length === 0) {
+        if(searchTerm.length === 0) {
             return;
         }
 
@@ -178,7 +186,7 @@ function prepareConfig($, $document) {
                     cd.emblemBackgroundPath +
                     '" )}';
             }
-            console.debug("Dynamic character styles generated: ", characterStyle);
+            //console.debug("Dynamic character styles generated: ", characterStyle);
 
             var $customStyle = $('<style id="user-custom-' + membershipInfo.membershipType + '">' );
             $customStyle.text(characterStyle);
@@ -247,6 +255,10 @@ function prepareConfig($, $document) {
         return d + "d " + h + "h " + m + "m";
     };
 
+    // Auto load
+    if(config.data.searchTerm.length > 0) {
+        config.methods.fetchPlayerData();
+    }
 }
 
 function drawActivitySummaryGraph() {
