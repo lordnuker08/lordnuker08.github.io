@@ -1,0 +1,138 @@
+<html xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <script
+            src="https://code.jquery.com/jquery-3.4.1.min.js"
+            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
+            crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js" integrity="sha256-xKeoJ50pzbUGkpQxDYHD7o7hxe0LaOGeguUidbq6vis=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="main.css"/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous" />
+
+</head>
+<body>
+<div id="app">
+    <div class="guardian-input">
+        <div class="search">
+            <input type="text" name="guardian" id="guardian" v-model="searchTerm" placeholder="Search player"/>
+            <button type="submit" v-on:click="fetchPlayerData" name="go" id="go">
+                <i class="fa fa-search"></i>
+            </button>
+            <span class="loading-info">{{infoMessage}}</span>
+        </div>
+    </div>
+    <div id="app-tabs" class="container">
+        <div class="tabs">
+            <a v-on:click="activetab=1" v-bind:class="[ activetab === 1 ? 'active' : '' ]">Player Info</a>
+            <a v-on:click="activetab=2" v-bind:class="[ activetab === 2 ? 'active' : '' ]">Activities</a>
+            <a v-on:click="activetab=3" v-bind:class="[ activetab === 3 ? 'active' : '' ]">Charts</a>
+        </div>
+
+        <div class="content">
+            <div v-if="activetab === 1" class="tabcontent">
+                <div class="player-info">
+                    <div class="table-wrapper">
+                        <table class="fl-table" id="characters">
+                            <thead>
+                            <tr>
+                                <th>Platform <div v-bind:class="isLoadingComplete ? 'hidden' : 'loader'"></div></th>
+                                <th>Character</th>
+                                <th>Level</th>
+                                <th>Power</th>
+                                <th>Mobility</th>
+                                <th>Resilience</th>
+                                <th>Recovery</th>
+                                <th>Last Played</th>
+                                <th>Total Time Played</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="character in charactersInfo">
+                                <td class="platform">
+                                    <img class="platform" alt="Platform Icon" v-bind:src="character.platformIconPath"/>
+                                    <div v-bind:data-character-id="character.characterId" v-bind:class="character.loaded ? 'hidden' : 'loader'"></div>
+                                </td>
+                                <td v-bind:class="'emblem char-class-emblem-bg-' + character.characterId">
+                                    {{genderTypeMap.get(character.genderType)}} {{raceTypeMap.get(character.raceType)}} {{classTypeMap.get(character.classType)}}
+                                </td>
+                                <td>{{character.levelProgression.level}}</td>
+                                <td>{{character.light}}</td>
+                                <td>{{ character.stats['2996146975'] }}</td>
+                                <td>{{ character.stats['392767087'] }}</td>
+                                <td>{{ character.stats['1943323491'] }}</td>
+                                <td>{{ moment(character.dateLastPlayed).format("l LT") }}</td>
+                                <td>{{ getDurationFromMinutes(character.minutesPlayedTotal)}}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+            <div v-if="activetab === 2" class="tabcontent">
+                <div class="table-wrapper">
+                    <table id="activities" class="fl-table">
+                        <thead>
+                        <tr>
+                            <th>Character</th>
+                            <th>Time</th>
+                            <th>Duration</th>
+                            <th>Mode</th>
+                            <th>Type</th>
+                            <th>Completed</th>
+                            <th>Kills</th>
+                            <th>Assists</th>
+                            <th>Deaths</th>
+                            <th>Opponents</th>
+                            <th>Efficiency</th>
+                            <th>K/D</th>
+                            <th>KA/D</th>
+                            <th>Score</th>
+                            <th>Team</th>
+                            <th>Players</th>
+                            <th>Team Score</th>
+                            <th>Standing</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="activity in activities">
+                            <td v-bind:class="'char char-class-' + activity.characterId"></td>
+                            <td class="time" v-bind:data-value="activity.period"> {{ moment(activity.period).format("l LT") }} </td>
+                            <td class="duration" v-bind:data-value="activity.values.timePlayedSeconds.basic.value">{{ activity.values.timePlayedSeconds.basic.displayValue }}</td>
+                            <td class="mode" v-bind:data-value="activity.activityDetails.mode">{{ getActivityModeType(activity.activityDetails.mode) }} </td>
+                            <td class="type" v-bind:data-value="activity.activityDetails.directorActivityHash"> {{ getActivityType(activity.activityDetails.directorActivityHash) }}</td>
+                            <td class="completed"> {{ activity.values.completed.basic.displayValue }} </td>
+                            <td class="kills"> {{ activity.values.kills.basic.displayValue }} </td>
+                            <td class="assists"> {{ activity.values.assists.basic.displayValue }} </td>
+                            <td class="deaths"> {{ activity.values.deaths.basic.displayValue }} </td>
+                            <td class="opponents"> {{ activity.values.opponentsDefeated.basic.displayValue }} </td>
+                            <td class="efficiency"> {{ activity.values.efficiency.basic.displayValue }} </td>
+                            <td class="kd"> {{ activity.values.killsDeathsRatio.basic.displayValue }} </td>
+                            <td class="kad"> {{ activity.values.killsDeathsAssists.basic.displayValue }} </td>
+                            <td class="score"> {{ activity.values.score.basic.displayValue }} </td>
+                            <td class="team"> {{ activity.values.team.basic.displayValue }} </td>
+                            <td class="players"> {{ activity.values.playerCount.basic.displayValue }} </td>
+                            <td class="teamscore"> {{ activity.values.teamScore.basic.displayValue }} </td>
+                            <td class="standing" v-bind:data-value="activity.values.standing ? activity.values.standing.basic.value : ''"> {{ activity.values.standing ? activity.values.standing.basic.displayValue : "" }} </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div v-if="activetab === 3" class="tabcontent">
+                <div id="charts">
+                    <button type="submit" name="draw-charts" id="draw-charts" v-on:click="drawActivitySummaryGraph">Draw Charts</button>
+                    <canvas id="summary-chart" height="400"></canvas>
+                    <canvas id="pvp-summary-chart" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<script src="maps.js"></script>
+<script src="script.js"></script>
+</body>
+</html>
