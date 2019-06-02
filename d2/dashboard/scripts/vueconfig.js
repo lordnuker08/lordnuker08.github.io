@@ -115,6 +115,7 @@ function prepareConfig($, $document) {
 
     config.methods.blizzardUserClicked = function(e) {
         e.preventDefault();
+
         var membershipId = $(e.target).attr("data-membership-id");
         console.debug("Blizzard member: " + membershipId);
         resolvePcUserMemberships(membershipId);
@@ -126,7 +127,7 @@ function prepareConfig($, $document) {
         $.ajax(prepareGetParams("/User/GetMembershipsById/" + membershipId + "/4/", "/Platform")).then(function (response) {
             for(var i = 0; i < response.Response.destinyMemberships.length; i++) {
                 var dm = response.Response.destinyMemberships[i];
-                config.data.resolvedMemberships.push({membershipId: dm.membershipId, membershipType:dm.membershipType});
+                config.data.resolvedMemberships.push(dm);
             }
 
             if(config.data.resolvedMemberships.length > 0) {
@@ -137,6 +138,9 @@ function prepareConfig($, $document) {
 
     var processResolvedMemberships = function() {
         var membershipInfoIndex = 0;
+        config.data.activities = [];
+        config.data.characterIds = [];
+        config.data.charactersInfo = [];
 
         var parseCharacterDetails = function(membershipInfo, charactersData) {
             var characters = [];
@@ -144,6 +148,10 @@ function prepareConfig($, $document) {
                 var cd = charactersData[c];
                 cd.platformIconPath = bungieSite + membershipInfo.iconPath;
                 cd.membershipType = membershipInfo.membershipType;
+                if(cd.membershipType === 4) {
+                    // Icon is not provided for blizzard... cheap!
+                    cd.platformIconPath = "/d2/images/logos/battlenet-icon.jpg"
+                }
                 cd.activitiesPage = 0;
                 cd.loaded = false;
                 characters.push(cd);
@@ -251,7 +259,7 @@ function prepareConfig($, $document) {
                 result.Response.forEach(function (membershipInfo) {
                     // Add any additional data here
                     // Load data for each membership information
-                    config.data.resolvedMemberships.push({membershipId: membershipInfo.membershipId, membershipType:membershipInfo.membershipType});
+                    config.data.resolvedMemberships.push(membershipInfo);
                     playerFound = true;
                 });
                 if (!playerFound) {
