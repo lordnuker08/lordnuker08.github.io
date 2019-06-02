@@ -1,6 +1,7 @@
 var app,
     dailyActivityChart, dailyActivityChartConfig,
     pvpActivityChart, pvpActivityChartConfig;
+
 var config = {
     el: "#app",
     data: {
@@ -9,7 +10,7 @@ var config = {
             activities: [],
             membershipInfo: [],
             searchTerm:"",
-            infoMessage:""
+            errorMessage:""
     },
     computed : {
         isSearchDisabled : function () {
@@ -51,11 +52,21 @@ function prepareConfig($, $document) {
         config.data.searchTerm = decodeURIComponent( hrefParts[1] );
     }
 
+    var setErrorMessage = function (message) {
+        config.data.errorMessage = message;
+    };
+
+    var ajaxError = function (xhr, textStatus, errorThrown ) {
+        setErrorMessage(textStatus + " " + errorThrown);
+    }
+
     var prepareGetParams = function(getUrl) {
         var base = "https://www.bungie.net/Platform/Destiny2/";
+        setErrorMessage("");
         return {
             type: "GET",
             headers: { "X-API-Key": api_key },
+            error: ajaxError,
             url: base + getUrl
         };
     };
@@ -63,9 +74,6 @@ function prepareConfig($, $document) {
     var callApi = function(api) {
         return $.ajax(prepareGetParams(api));
     };
-
-
-
 
     var storeActivityData = function(characterId, membershipType, activities) {
         if (activities) {
@@ -207,9 +215,9 @@ function prepareConfig($, $document) {
             config.data.membershipInfo = [];
             config.data.charactersInfo = [];
             var membershipInfoIndex = 0;
+            var playerFound = false;
             result.Response.forEach(function(membershipInfo) {
                 // Add any additional data here
-
                 // Load data for each membership information
                 loadFullProfile(membershipInfo).then(function(result) {
 
@@ -226,8 +234,12 @@ function prepareConfig($, $document) {
                     loadAllCharacterActivities(membershipInfoIndex);
                     membershipInfoIndex++;
                 });
-
+                playerFound = true;
             });
+            if(!playerFound) {
+                setErrorMessage("No data found for [" + config.data.searchTerm
+                    + "]. Either the player does not exist or there are no characters on this account.")
+            }
         });
     };
 

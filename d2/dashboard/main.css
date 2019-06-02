@@ -264,3 +264,10 @@ div.loader {
 .hidden {
     display: none;
 }
+
+p#error-message {
+    padding: 5px 5px 5px 5px;
+    display: inline;
+    margin: 5px 5px;
+    color: red;
+}
