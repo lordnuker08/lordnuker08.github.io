@@ -1,24 +1,26 @@
 var app,
-    dailyActivityChart, dailyActivityChartConfig,
-    pvpActivityChart, pvpActivityChartConfig;
+    dailyActivityChart,
+    dailyActivityChartConfig,
+    pvpActivityChart,
+    pvpActivityChartConfig;
 
 var config = {
     el: "#app",
     data: {
-            activetab: 1,
-            charactersInfo: [],
-            activities: [],
-            membershipInfo: [],
-            searchTerm:"",
-            errorMessage:""
+        activetab: 1,
+        charactersInfo: [],
+        activities: [],
+        membershipInfo: [],
+        searchTerm: "",
+        errorMessage: ""
     },
-    computed : {
-        isSearchDisabled : function () {
+    computed: {
+        isSearchDisabled: function() {
             return this.searchTerm.trim().length > 0;
         },
-        isLoadingComplete : function () {
-            for(var c = 0; c < this.charactersInfo.length; c++) {
-                if(this.charactersInfo[c].loaded === false) {
+        isLoadingComplete: function() {
+            for (var c = 0; c < this.charactersInfo.length; c++) {
+                if (this.charactersInfo[c].loaded === false) {
                     return false;
                 }
             }
@@ -26,10 +28,10 @@ var config = {
         }
     },
     methods: {
-        chartTabClicked : function () {
+        chartTabClicked: function() {
             this.activetab = 3;
             // Slow tab switch
-            setTimeout( function() {
+            setTimeout(function() {
                 drawActivitySummaryGraph();
             }, 500);
         }
@@ -47,18 +49,18 @@ function prepareConfig($, $document) {
     var EVENT_LOAD_CHARACTER_DATA = "load_character_data" + NAMESPACE;
 
     // Parse data from url
-    var hrefParts = window.location.href.split('#');
-    if(hrefParts.length > 1) {
-        config.data.searchTerm = decodeURIComponent( hrefParts[1] );
+    var hrefParts = window.location.href.split("#");
+    if (hrefParts.length > 1) {
+        config.data.searchTerm = decodeURIComponent(hrefParts[1]);
     }
 
-    var setErrorMessage = function (message) {
+    var setErrorMessage = function(message) {
         config.data.errorMessage = message;
     };
 
-    var ajaxError = function (xhr, textStatus, errorThrown ) {
+    var ajaxError = function(xhr, textStatus, errorThrown) {
         setErrorMessage(textStatus + " " + errorThrown);
-    }
+    };
 
     var prepareGetParams = function(getUrl) {
         var base = "https://www.bungie.net/Platform/Destiny2/";
@@ -80,7 +82,8 @@ function prepareConfig($, $document) {
             activities.forEach(function(activity) {
                 activity.characterId = characterId;
                 activity.membershipType = membershipType;
-                activity.isPvP = pvpActivities.indexOf(activity.activityDetails.mode) !== -1;
+                activity.isPvP =
+                    pvpActivities.indexOf(activity.activityDetails.mode) !== -1;
                 config.data.activities.push(activity);
             });
         }
@@ -93,7 +96,10 @@ function prepareConfig($, $document) {
     };
 
     var triggerLoadCharacterData = function(characterIndex, membershipInfoIndex) {
-        $document.trigger(EVENT_LOAD_CHARACTER_DATA, {characterIndex : characterIndex, membershipInfoIndex : membershipInfoIndex});
+        $document.trigger(EVENT_LOAD_CHARACTER_DATA, {
+            characterIndex: characterIndex,
+            membershipInfoIndex: membershipInfoIndex
+        });
     };
 
     $document.on(EVENT_LOAD_CHARACTER_DATA, function(event, data) {
@@ -113,7 +119,9 @@ function prepareConfig($, $document) {
                     membershipInfo.membershipType,
                     result.Response.activities
                 );
-                config.data.membershipInfo[data.membershipInfoIndex].characters[data.characterIndex].activitiesPage++;
+                config.data.membershipInfo[data.membershipInfoIndex].characters[
+                    data.characterIndex
+                    ].activitiesPage++;
                 triggerLoadCharacterData(data.characterIndex, data.membershipInfoIndex);
             } else {
                 console.debug(
@@ -122,7 +130,9 @@ function prepareConfig($, $document) {
                     " page(s) of activites for chracter: " +
                     character.characterId
                 );
-                config.data.membershipInfo[data.membershipInfoIndex].characters[data.characterIndex].loaded = true;
+                config.data.membershipInfo[data.membershipInfoIndex].characters[
+                    data.characterIndex
+                    ].loaded = true;
                 sortActivities();
             }
         };
@@ -137,7 +147,9 @@ function prepareConfig($, $document) {
             "/Stats/Activities/?mode=None&count=" +
             maxRecord +
             "&page=" +
-            config.data.membershipInfo[data.membershipInfoIndex].characters[data.characterIndex].activitiesPage
+            config.data.membershipInfo[data.membershipInfoIndex].characters[
+                data.characterIndex
+                ].activitiesPage
         ).then(processor);
     });
 
@@ -146,7 +158,7 @@ function prepareConfig($, $document) {
         this.characterIds = [];
         var searchTerm = config.data.searchTerm.trim();
 
-        if(searchTerm.length === 0) {
+        if (searchTerm.length === 0) {
             return;
         }
 
@@ -155,11 +167,10 @@ function prepareConfig($, $document) {
         };
 
         var parseCharacterDetails = function(membershipInfo, charactersData) {
-            var characters = []
+            var characters = [];
             for (var c in charactersData) {
                 var cd = charactersData[c];
-                cd.platformIconPath =
-                    bungieSite + membershipInfo.iconPath;
+                cd.platformIconPath = bungieSite + membershipInfo.iconPath;
                 cd.membershipType = membershipInfo.membershipType;
                 cd.activitiesPage = 0;
                 cd.loaded = false;
@@ -169,7 +180,12 @@ function prepareConfig($, $document) {
         };
 
         var loadFullProfile = function(membershipInfo) {
-            return callApi(membershipInfo.membershipType + "/Profile/" + membershipInfo.membershipId + "/?components=100,200");
+            return callApi(
+                membershipInfo.membershipType +
+                "/Profile/" +
+                membershipInfo.membershipId +
+                "/?components=100,200"
+            );
         };
 
         var createCharacterDynamicCss = function(membershipInfo) {
@@ -196,7 +212,9 @@ function prepareConfig($, $document) {
             }
             //console.debug("Dynamic character styles generated: ", characterStyle);
 
-            var $customStyle = $('<style id="user-custom-' + membershipInfo.membershipType + '">' );
+            var $customStyle = $(
+                '<style id="user-custom-' + membershipInfo.membershipType + '">'
+            );
             $customStyle.text(characterStyle);
             $customStyle.appendTo(document.head);
         };
@@ -206,7 +224,11 @@ function prepareConfig($, $document) {
             console.debug("membershipInfoIndex: " + membershipInfoIndex);
             console.debug(membershipInfo);
             // All characters available
-            for (var characterIndex = 0; characterIndex < membershipInfo.characters.length; characterIndex++) {
+            for (
+                var characterIndex = 0;
+                characterIndex < membershipInfo.characters.length;
+                characterIndex++
+            ) {
                 triggerLoadCharacterData(characterIndex, membershipInfoIndex);
             }
         };
@@ -220,10 +242,13 @@ function prepareConfig($, $document) {
                 // Add any additional data here
                 // Load data for each membership information
                 loadFullProfile(membershipInfo).then(function(result) {
-
                     membershipInfo.profile = result.Response.profile.data;
-                    membershipInfo.characterIds = result.Response.profile.data.characterIds;
-                    membershipInfo.characters = parseCharacterDetails(membershipInfo, result.Response.characters.data);
+                    membershipInfo.characterIds =
+                        result.Response.profile.data.characterIds;
+                    membershipInfo.characters = parseCharacterDetails(
+                        membershipInfo,
+                        result.Response.characters.data
+                    );
                     config.data.charactersInfo.push(...membershipInfo.characters);
                     createCharacterDynamicCss(membershipInfo);
 
@@ -236,9 +261,12 @@ function prepareConfig($, $document) {
                 });
                 playerFound = true;
             });
-            if(!playerFound) {
-                setErrorMessage("No data found for [" + config.data.searchTerm
-                    + "]. Either the player does not exist or there are no characters on this account.")
+            if (!playerFound) {
+                setErrorMessage(
+                    "No data found for [" +
+                    config.data.searchTerm +
+                    "]. Either the player does not exist or there are no characters on this account."
+                );
             }
         });
     };
@@ -268,39 +296,38 @@ function prepareConfig($, $document) {
     };
 
     // Auto load
-    if(config.data.searchTerm.length > 0) {
+    if (config.data.searchTerm.length > 0) {
         config.methods.fetchPlayerData();
     }
 }
 
 function drawActivitySummaryGraph() {
     "use strict";
-    var summarizeByDate = function () {
+    var summarizeByDate = function() {
         return config.data.activities.reduce(function(r, e) {
-            var date = e.period.substr(0, e.period.indexOf('T'));
+            var date = e.period.substr(0, e.period.indexOf("T"));
 
             if (r[date] === undefined) {
-                r[date] = {count: 1, time: 0};
+                r[date] = { count: 1, time: 0 };
             }
 
             r[date].count = r[date].count + 1;
             r[date].time = r[date].time + e.values.timePlayedSeconds.basic.value;
 
-            return r
+            return r;
         }, []);
     };
 
     var summarizedPvPActivities = config.data.activities.reduce(function(r, e) {
-
-        if(e.isPvP) {
-            var date = e.period.substr(0, e.period.indexOf('T'));
+        if (e.isPvP) {
+            var date = e.period.substr(0, e.period.indexOf("T"));
             if (r[date] === undefined) {
-                r[date] = { details : [], won : 0, lost : 0 };
+                r[date] = { details: [], won: 0, lost: 0 };
             }
-            if(r[date].details[e.activityDetails.mode] === undefined) {
-                r[date].details[e.activityDetails.mode] = {won:0, lost:0};
+            if (r[date].details[e.activityDetails.mode] === undefined) {
+                r[date].details[e.activityDetails.mode] = { won: 0, lost: 0 };
             }
-            if(e.values.standing.basic.value === 0 ) {
+            if (e.values.standing.basic.value === 0) {
                 r[date].won++;
                 r[date].details[e.activityDetails.mode].won++;
             } else {
@@ -312,74 +339,81 @@ function drawActivitySummaryGraph() {
         return r;
     }, []);
 
-
-    var summarizedActivities = summarizeByDate()
+    var summarizedActivities = summarizeByDate();
 
     // convert to array
     var dailyActivityChartData = [];
-    for(var item in summarizedActivities) {
+    for (var item in summarizedActivities) {
         var details = summarizedActivities[item];
-        dailyActivityChartData.push({"date": item, "count" : details.count, "time" : details.time})
+        dailyActivityChartData.push({
+            date: item,
+            count: details.count,
+            time: details.time
+        });
     }
 
     var pvpActivityChartData = [];
 
-    for(var item in summarizedPvPActivities) {
+    for (var item in summarizedPvPActivities) {
         var pvpActivityDetail = summarizedPvPActivities[item];
-        pvpActivityChartData.push( {"date" : item, won : pvpActivityDetail.won, lost: pvpActivityDetail.lost });
+        pvpActivityChartData.push({
+            date: item,
+            won: pvpActivityDetail.won,
+            lost: pvpActivityDetail.lost
+        });
     }
 
-    var dailyActivityChartCtx = document.getElementById('summary-chart');
+    var dailyActivityChartCtx = document.getElementById("summary-chart");
 
     dailyActivityChartConfig = {
-        type: 'bar',
+        type: "bar",
         options: {
             responsive: true,
-            hoverMode: 'index',
+            hoverMode: "index",
             stacked: false,
             title: {
                 display: true,
-                text: 'Daily Activity Summary'
+                text: "Daily Activity Summary"
             },
             scales: {
                 yAxes: [
                     {
-                        type: 'linear',
+                        type: "linear",
                         display: true,
-                        position: 'left',
-                        id: 'y-axis-activity-count'
+                        position: "left",
+                        id: "y-axis-activity-count"
                     },
                     {
-
-                        type: 'linear',
+                        type: "linear",
                         display: true,
-                        position: 'right',
-                        id: 'y-axis-time-played',
+                        position: "right",
+                        id: "y-axis-time-played",
 
                         // grid line settings
                         gridLines: {
-                            drawOnChartArea: false,
+                            drawOnChartArea: false
                         },
 
                         ticks: {
                             // Change to hours and minutes
                             callback: function(value, index, values) {
                                 var display = "";
-                                var h = Math.floor( value / 60 );
+                                var h = Math.floor(value / 60);
                                 var m = value % 60;
-                                if( h > 0) {
+                                if (h > 0) {
                                     display = h + "h ";
                                 }
-                                if( m > 0) {
+                                if (m > 0) {
                                     display = display + m + "m";
                                 }
                                 return display;
                             }
                         }
-                    }]
+                    }
+                ]
             }
         },
-        data : {
+        data: {
             labels: [],
             datasets: [
                 {
@@ -387,53 +421,61 @@ function drawActivitySummaryGraph() {
                     borderColor: "rgb(255, 99, 132)",
                     backgroundColor: "rgb(255, 99, 132)",
                     fill: false,
-                    yAxisID: 'y-axis-activity-count',
-                    data: [],
+                    yAxisID: "y-axis-activity-count",
+                    data: []
                 },
                 {
                     label: "Time Played (minutes)",
                     borderColor: "rgb(54, 162, 235)",
                     backgroundColor: "rgb(54, 162, 235)",
                     fill: false,
-                    yAxisID: 'y-axis-time-played',
+                    yAxisID: "y-axis-time-played",
                     data: []
                 }
             ]
         }
     };
 
-    for(var i = 0; i < dailyActivityChartData.length; i++) {
+    for (var i = 0; i < dailyActivityChartData.length; i++) {
         var cd = dailyActivityChartData[i];
         dailyActivityChartConfig.data.labels.push(cd.date);
         dailyActivityChartConfig.data.datasets[0].data.push(cd.count);
-        dailyActivityChartConfig.data.datasets[1].data.push( ( Math.floor(cd.time/60)));
+        dailyActivityChartConfig.data.datasets[1].data.push(
+            Math.floor(cd.time / 60)
+        );
     }
 
-
-    dailyActivityChart = new Chart.Line(dailyActivityChartCtx, dailyActivityChartConfig);
+    dailyActivityChart = new Chart.Line(
+        dailyActivityChartCtx,
+        dailyActivityChartConfig
+    );
 
     pvpActivityChartConfig = {
-        type: 'bar',
+        type: "bar",
         options: {
             title: {
                 display: true,
-                text: 'Daily PvP Summary'
+                text: "Daily PvP Summary"
             },
             tooltips: {
-                mode: 'index',
+                mode: "index",
                 intersect: false
             },
             responsive: true,
             scales: {
-                xAxes: [{
-                    stacked: true,
-                }],
-                yAxes: [{
-                    stacked: true
-                }]
+                xAxes: [
+                    {
+                        stacked: true
+                    }
+                ],
+                yAxes: [
+                    {
+                        stacked: true
+                    }
+                ]
             }
         },
-        data : {
+        data: {
             labels: [],
             datasets: [
                 {
@@ -441,7 +483,7 @@ function drawActivitySummaryGraph() {
                     borderColor: "rgb(12, 255, 132)",
                     backgroundColor: "rgb(12, 255, 132)",
                     fill: false,
-                    data: [],
+                    data: []
                 },
                 {
                     label: "Matches Lost",
@@ -454,15 +496,15 @@ function drawActivitySummaryGraph() {
         }
     };
 
-    for(var i =0; i < pvpActivityChartData.length; i++) {
+    for (var i = 0; i < pvpActivityChartData.length; i++) {
         var cd = pvpActivityChartData[i];
         pvpActivityChartConfig.data.labels.push(cd.date);
         pvpActivityChartConfig.data.datasets[0].data.push(cd.won); // Wins
         pvpActivityChartConfig.data.datasets[1].data.push(-1 * cd.lost); // Losses are negative
     }
 
-    var pvpActivityChartCtx = document.getElementById('pvp-summary-chart');
+    var pvpActivityChartCtx = document.getElementById("pvp-summary-chart");
     pvpActivityChart = new Chart(pvpActivityChartCtx, pvpActivityChartConfig);
 }
 prepareConfig($, $(document));
-app  = new Vue(config);
+app = new Vue(config);
