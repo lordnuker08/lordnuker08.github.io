@@ -4,11 +4,11 @@ Hi Guardians,
 
 Here is a simple dashboard to see your (or other's?) activities on D2. Just follow the link to this site:
 
-https://lordnuker08.github.io/d2/dashboard
+[https://lordnuker08.github.io/d2/dashboard](https://lordnuker08.github.io/d2/dashboard)
 
 You can optionally append a gamer tag for the player you want:
 
-https://lordnuker08.github.io/d2/dashboard#lordnuker08
+[https://lordnuker08.github.io/d2/dashboard#lordnuker08](https://lordnuker08.github.io/d2/dashboard#lordnuker08)
 
 Once loaded, you will need to hit the 'Search' button and wait for all the spinning graphics to cease.
 
@@ -35,5 +35,9 @@ Just fork and send a pull request.
 Hmmm.... lets's see. I will, once I get time from other projects.
 
 # Releases
+## 1.1
+- Support for PC users
+- Better/simpler styling.
+
 ## 1.0
 Initial load with some flaws. 
