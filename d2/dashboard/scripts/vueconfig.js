@@ -4,7 +4,7 @@ function prepareConfig($, $document) {
         window.location.href.indexOf("beta") > -1
             ? "2dea235ddd854458ab0dae8adc2f0835"
             : "755e377b63b5405090a4e4d202a58537";
-    var bungieSite = "https://bungie.net";
+    var bungieSite = "https://www.bungie.net";
     var NAMESPACE = ".ln08"; // :)
     var EVENT_LOAD_CHARACTER_DATA = "load_character_data" + NAMESPACE;
 
@@ -22,8 +22,8 @@ function prepareConfig($, $document) {
         setErrorMessage(textStatus + " " + errorThrown);
     };
 
-    var prepareGetParams = function(getUrl) {
-        var base = "https://www.bungie.net/Platform/Destiny2/";
+    var prepareGetParams = function(getUrl, baseOverride) {
+        var base = baseOverride === undefined ? bungieSite + "/Platform/Destiny2/" : bungieSite + baseOverride;
         setErrorMessage("");
         return {
             type: "GET",
@@ -113,18 +113,30 @@ function prepareConfig($, $document) {
         ).then(processor);
     });
 
-    config.methods.fetchPlayerData = function() {
-        this.activities = [];
-        this.characterIds = [];
-        var searchTerm = config.data.searchTerm.trim();
+    config.methods.blizzardUserClicked = function(e) {
+        e.preventDefault();
+        var membershipId = $(e.target).attr("data-membership-id");
+        console.debug("Blizzard member: " + membershipId);
+        resolvePcUserMemberships(membershipId);
+    };
 
-        if (searchTerm.length === 0) {
-            return;
-        }
+    var resolvePcUserMemberships = function(membershipId) {
+        config.data.resolvedMemberships = [];
+        // membership is only valid for pc platform but can fetch other platform information weirdly
+        $.ajax(prepareGetParams("/User/GetMembershipsById/" + membershipId + "/4/", "/Platform")).then(function (response) {
+            for(var i = 0; i < response.Response.destinyMemberships.length; i++) {
+                var dm = response.Response.destinyMemberships[i];
+                config.data.resolvedMemberships.push({membershipId: dm.membershipId, membershipType:dm.membershipType});
+            }
 
-        var searchPlayer = function() {
-            return callApi("SearchDestinyPlayer/-1/" + searchTerm + "/");
-        };
+            if(config.data.resolvedMemberships.length > 0) {
+                processResolvedMemberships();
+            }
+        })
+    };
+
+    var processResolvedMemberships = function() {
+        var membershipInfoIndex = 0;
 
         var parseCharacterDetails = function(membershipInfo, charactersData) {
             var characters = [];
@@ -193,42 +205,79 @@ function prepareConfig($, $document) {
             }
         };
 
-        searchPlayer().then(function(result) {
-            config.data.membershipInfo = [];
-            config.data.charactersInfo = [];
-            var membershipInfoIndex = 0;
-            var playerFound = false;
-            result.Response.forEach(function(membershipInfo) {
-                // Add any additional data here
-                // Load data for each membership information
-                loadFullProfile(membershipInfo).then(function(result) {
-                    membershipInfo.profile = result.Response.profile.data;
-                    membershipInfo.characterIds =
-                        result.Response.profile.data.characterIds;
-                    membershipInfo.characters = parseCharacterDetails(
-                        membershipInfo,
-                        result.Response.characters.data
-                    );
-                    config.data.charactersInfo.push(...membershipInfo.characters);
-                    createCharacterDynamicCss(membershipInfo);
-
-                    // Save membership info
-                    config.data.membershipInfo.push(membershipInfo);
-
-                    // Load activities for this membership
-                    loadAllCharacterActivities(membershipInfoIndex);
-                    membershipInfoIndex++;
-                });
-                playerFound = true;
-            });
-            if (!playerFound) {
-                setErrorMessage(
-                    "No data found for [" +
-                    config.data.searchTerm +
-                    "]. Either the player does not exist or there are no characters on this account."
+        config.data.resolvedMemberships.forEach(function (membershipInfo) {
+            // Add any additional data here
+            // Load data for each membership information
+            loadFullProfile(membershipInfo).then(function (result) {
+                membershipInfo.profile = result.Response.profile.data;
+                membershipInfo.characterIds =
+                    result.Response.profile.data.characterIds;
+                membershipInfo.characters = parseCharacterDetails(
+                    membershipInfo,
+                    result.Response.characters.data
                 );
-            }
+                config.data.charactersInfo.push(...membershipInfo.characters);
+                createCharacterDynamicCss(membershipInfo);
+
+                // Save membership info
+                config.data.membershipInfo.push(membershipInfo);
+
+                // Load activities for this membership
+                loadAllCharacterActivities(membershipInfoIndex);
+                membershipInfoIndex++;
+            });
         });
+    };
+
+    config.methods.fetchPlayerData = function() {
+        this.activities = [];
+        this.characterIds = [];
+        var searchTerm = config.data.searchTerm.trim();
+
+        if (searchTerm.length === 0) {
+            return;
+        }
+
+        var searchPlayer = function() {
+            return callApi("SearchDestinyPlayer/-1/" + searchTerm + "/");
+        };
+
+        if(config.data.platform === "console") {
+            searchPlayer().then(function (result) {
+                config.data.membershipInfo = [];
+                config.data.charactersInfo = [];
+                config.data.resolvedMemberships = [];
+                var playerFound = false;
+                result.Response.forEach(function (membershipInfo) {
+                    // Add any additional data here
+                    // Load data for each membership information
+                    config.data.resolvedMemberships.push({membershipId: membershipInfo.membershipId, membershipType:membershipInfo.membershipType});
+                    playerFound = true;
+                });
+                if (!playerFound) {
+                    setErrorMessage(
+                        "No data found for [" +
+                        config.data.searchTerm +
+                        "]. Either the player does not exist or there are no characters on this account."
+                    );
+                } else {
+                    processResolvedMemberships();
+                }
+            });
+        }
+        else {
+            // PC
+            config.data.pcUserSearchResults = [];
+            $.ajax(prepareGetParams("/User/SearchUsersPaged/" + searchTerm + "/1/25/", "/Platform")).then (function (response) {
+                for(var i = 0; i < response.Response.results.length; i++) {
+                    var r = response.Response.results[i];
+                       // Only way for blizzard
+                       if(r.blizzardDisplayName !== undefined) {
+                           config.data.pcUserSearchResults.push(r);
+                       }
+                }
+            });
+        }
     };
 
     config.methods.getActivityType = function(activityHash) {

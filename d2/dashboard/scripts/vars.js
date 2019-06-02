@@ -14,7 +14,11 @@ var config = {
         activities: [],
         membershipInfo: [],
         searchTerm: "",
-        errorMessage: ""
+        platform:"console",
+        pcUserSearchResults: [],
+        selectedBlizzardUserMembershipId: 0,
+        errorMessage: "",
+        resolvedMemberships: []
     },
     computed: {
         isSearchDisabled: function() {
