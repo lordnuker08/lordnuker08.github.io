@@ -169,7 +169,7 @@ Just removed the curves
 
 .container {
     min-width: 420px;
-    margin: 40px auto;
+    margin: 10px auto;
     font-family: Arial, Helvetica, sans-serif;
     font-size: 0.9em;
     color: #888;
@@ -190,7 +190,7 @@ Just removed the curves
 .tabs a{
     float: left;
     cursor: pointer;
-    padding: 12px 24px;
+    padding: 6px 6px;
     transition: background-color 0.2s;
     border: 1px solid #ccc;
     border-right: none;

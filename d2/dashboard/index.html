@@ -25,7 +25,8 @@
             </ul>
         </div>
     </div>
-    <div id="app-tabs" class="container">
+    <hr/>
+    <div id="app-tabs" v-bind:class=" charactersInfo.length > 0 ? 'container' : 'hidden' ">
         <div class="tabs">
             <a v-on:click="activetab=1" v-bind:class="[ activetab === 1 ? 'active' : '' ]">Player Info</a>
             <a v-on:click="activetab=2" v-bind:class="[ (activetab === 2 || !isLoadingComplete) ? 'active' : '' ]">Activities</a>
