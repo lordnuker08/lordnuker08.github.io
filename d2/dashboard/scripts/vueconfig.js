@@ -247,9 +247,9 @@ function prepareConfig($, $document) {
     }
 
     config.methods.findPlayers = function() {
-        this.clearSearchData();
+        config.methods.clearSearchData();
 
-        var searchTerm = this.searchTerm.trim();
+        var searchTerm = config.data.searchTerm.trim();
 
         if (searchTerm.length === 0) {
             return;
@@ -314,6 +314,6 @@ function prepareConfig($, $document) {
 
     // Auto load
     if (config.data.searchTerm.length > 0) {
-        config.methods.fetchPlayerData();
+        config.methods.findPlayers();
     }
 }
