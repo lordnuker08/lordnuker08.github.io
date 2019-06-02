@@ -32,7 +32,7 @@ Yes, just read the license and ensure that you are happy with it. Don't worry it
 Just fork and send a pull request.
 
 ## Will I work more on this?
-Hmmm.... lets's see. I will, once I get time from othrer projects.
+Hmmm.... lets's see. I will, once I get time from other projects.
 
 # Releases
 ## 1.0
