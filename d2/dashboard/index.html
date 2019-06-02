@@ -14,31 +14,15 @@
     <div class="guardian-input">
         <div class="search">
             <input type="text" name="guardian" id="guardian" v-model="searchTerm" placeholder="Search player" />
-            <button type="submit" v-on:click="fetchPlayerData" name="go" id="go">
-                <i class="fa fa-search"></i>
-            </button>
+            <input type="submit" v-on:click="findPlayers" name="go" id="go" value="Search"/>
             <p id="error-message">
                 {{errorMessage}}
             </p>
-            <div class="field">
-                <input type="radio" id="console" value="console" v-model="platform"><label for="console">Console</label>
-                <input type="radio" id="pc" value="pc" v-model="platform"><label for="pc">PC</label>
-            </div>
-            <div class="table-wrapper">
-                <table class="fl-table" id="pc-users-search-result">
-                    <thead>
-                    <tr>
-                        <th>Battlenet Users</th>
-                    </tr>
-                    </thead>
-                    <tbody>
-                        <tr v-for="user in pcUserSearchResults">
-                            <td v-bind:data-membershipId-id="user.membershipId">
-                                <a href="#"  v-bind:data-membership-id="user.membershipId" v-on:click="blizzardUserClicked">{{user.blizzardDisplayName}}</a></td>
-                        </tr>
-                    </tbody>
-                </table>
-            </div>
+            <ul class="players-found">
+                <li v-for="user in pcUserSearchResults">
+                    <a href="#"  v-bind:data-membership-id="user.membershipId" v-on:click="blizzardUserClicked">{{user.blizzardDisplayName}}</a>
+                </li>
+            </ul>
         </div>
     </div>
     <div id="app-tabs" class="container">

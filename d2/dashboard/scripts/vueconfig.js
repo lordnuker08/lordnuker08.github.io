@@ -237,55 +237,55 @@ function prepareConfig($, $document) {
         });
     };
 
-    config.methods.fetchPlayerData = function() {
-        this.activities = [];
-        this.characterIds = [];
-        var searchTerm = config.data.searchTerm.trim();
+    config.methods.clearSearchData = function() {
+        config.data.pcUserSearchResults = [];
+        config.data.activities = [];
+        config.data.characterIds = [];
+        config.data.membershipInfo = [];
+        config.data.charactersInfo = [];
+        config.data.resolvedMemberships = [];
+    }
+
+    config.methods.findPlayers = function() {
+        this.clearSearchData();
+
+        var searchTerm = this.searchTerm.trim();
 
         if (searchTerm.length === 0) {
             return;
         }
 
-        var searchPlayer = function() {
-            return callApi("SearchDestinyPlayer/-1/" + searchTerm + "/");
-        };
+        $.ajax(prepareGetParams("/User/SearchUsersPaged/" + searchTerm + "/1/25/", "/Platform")).then (function (response) {
+            for(var i = 0; i < response.Response.results.length; i++) {
+                var r = response.Response.results[i];
+                // Only way for blizzard
+                if(r.blizzardDisplayName !== undefined) {
+                    config.data.pcUserSearchResults.push(r);
+                }
+            }
 
-        if(config.data.platform === "console") {
-            searchPlayer().then(function (result) {
-                config.data.membershipInfo = [];
-                config.data.charactersInfo = [];
-                config.data.resolvedMemberships = [];
-                var playerFound = false;
-                result.Response.forEach(function (membershipInfo) {
-                    // Add any additional data here
-                    // Load data for each membership information
-                    config.data.resolvedMemberships.push(membershipInfo);
-                    playerFound = true;
+            if(config.data.pcUserSearchResults.length === 0) {
+                // Unlikely but look for registered non pc users
+                callApi("SearchDestinyPlayer/-1/" + searchTerm + "/").then(function (result) {
+                    var playerFound = false;
+                    result.Response.forEach(function (membershipInfo) {
+                        // Add any additional data here
+                        // Load data for each membership information
+                        config.data.resolvedMemberships.push(membershipInfo);
+                        playerFound = true;
+                    });
+                    if (!playerFound) {
+                        setErrorMessage(
+                            "No data found for [" +
+                            config.data.searchTerm +
+                            "]. Either the player does not exist or there are no characters on this account."
+                        );
+                    } else {
+                        processResolvedMemberships();
+                    }
                 });
-                if (!playerFound) {
-                    setErrorMessage(
-                        "No data found for [" +
-                        config.data.searchTerm +
-                        "]. Either the player does not exist or there are no characters on this account."
-                    );
-                } else {
-                    processResolvedMemberships();
-                }
-            });
-        }
-        else {
-            // PC
-            config.data.pcUserSearchResults = [];
-            $.ajax(prepareGetParams("/User/SearchUsersPaged/" + searchTerm + "/1/25/", "/Platform")).then (function (response) {
-                for(var i = 0; i < response.Response.results.length; i++) {
-                    var r = response.Response.results[i];
-                       // Only way for blizzard
-                       if(r.blizzardDisplayName !== undefined) {
-                           config.data.pcUserSearchResults.push(r);
-                       }
-                }
-            });
-        }
+            }
+        });
     };
 
     config.methods.getActivityType = function(activityHash) {
