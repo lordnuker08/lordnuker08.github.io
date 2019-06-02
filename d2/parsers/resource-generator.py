@@ -69,7 +69,7 @@ classValues = get_type_name_map(classDefinition.items(), u'classType')
 genderValues = get_type_name_map(genderDefinition.items(), u'genderType')
 raceValues = get_type_name_map(raceDefinition.items(), u'raceType')
 
-with open('../../maps.js', 'w', encoding=fileEncoding) as outfile:
+with open('../dashboard/scripts/maps.js', 'w', encoding=fileEncoding) as outfile:
     outfile.write( create_map_definition(u'activityTypeMap', activityValues))
     outfile.write(u'\n')
     outfile.write( create_map_definition(u'activityModeTypeMap', activityModeValues) )
