@@ -1,24 +1,19 @@
 <html xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
-    <script
-            src="https://code.jquery.com/jquery-3.4.1.min.js"
-            integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo="
-            crossorigin="anonymous"></script>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js" integrity="sha256-xKeoJ50pzbUGkpQxDYHD7o7hxe0LaOGeguUidbq6vis=" crossorigin="anonymous"></script>
-    <link rel="stylesheet" href="main.css"/>
+    <link rel="stylesheet" href="main.css" />
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
-
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous" />
-
 </head>
 <body>
 <div id="app">
     <div class="guardian-input">
         <div class="search">
-            <input type="text" name="guardian" id="guardian" v-model="searchTerm" placeholder="Search player"/>
+            <input type="text" name="guardian" id="guardian" v-model="searchTerm" placeholder="Search player" />
             <button type="submit" v-on:click="fetchPlayerData" name="go" id="go">
                 <i class="fa fa-search"></i>
             </button>
@@ -29,8 +24,8 @@
     </div>
     <div id="app-tabs" class="container">
         <div class="tabs">
-            <a v-on:click="activetab=1"  v-bind:class="[ activetab === 1 ? 'active' : '' ]">Player Info</a>
-            <a v-on:click="activetab=2"  v-bind:class="[ (activetab === 2 || !isLoadingComplete) ? 'active' : '' ]">Activities</a>
+            <a v-on:click="activetab=1" v-bind:class="[ activetab === 1 ? 'active' : '' ]">Player Info</a>
+            <a v-on:click="activetab=2" v-bind:class="[ (activetab === 2 || !isLoadingComplete) ? 'active' : '' ]">Activities</a>
             <a v-on:click="chartTabClicked" v-bind:class="[ (activetab === 3 || !isLoadingComplete) ? 'active' : '' ]">Charts</a>
         </div>
 
@@ -41,7 +36,9 @@
                         <table class="fl-table" id="characters">
                             <thead>
                             <tr>
-                                <th>Platform <div v-bind:class="isLoadingComplete ? 'hidden' : 'loader'"></div></th>
+                                <th>Platform
+                                    <div v-bind:class="isLoadingComplete ? 'hidden' : 'loader'"></div>
+                                </th>
                                 <th>Character</th>
                                 <th>Level</th>
                                 <th>Power</th>
@@ -55,7 +52,7 @@
                             <tbody>
                             <tr v-for="character in charactersInfo">
                                 <td class="platform">
-                                    <img class="platform" alt="Platform Icon" v-bind:src="character.platformIconPath"/>
+                                    <img class="platform" alt="Platform Icon" v-bind:src="character.platformIconPath" />
                                     <div v-bind:data-character-id="character.characterId" v-bind:class="character.loaded ? 'hidden' : 'loader'"></div>
                                 </td>
                                 <td v-bind:class="'emblem char-class-emblem-bg-' + character.characterId">
@@ -126,7 +123,7 @@
             </div>
             <div v-if="activetab === 3" class="tabcontent">
                 <div id="charts">
-<!--                    <button type="submit" name="draw-charts" id="draw-charts" v-on:click="drawActivitySummaryGraph">Draw Charts</button>-->
+                    <!--                    <button type="submit" name="draw-charts" id="draw-charts" v-on:click="drawActivitySummaryGraph">Draw Charts</button>-->
                     <canvas id="summary-chart" height="400"></canvas>
                     <canvas id="pvp-summary-chart" height="400"></canvas>
                 </div>
@@ -140,4 +137,5 @@
 <script src="scripts/charting.js"></script>
 <script src="scripts/script.js"></script>
 </body>
+
 </html>
