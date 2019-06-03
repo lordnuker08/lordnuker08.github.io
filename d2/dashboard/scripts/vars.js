@@ -15,7 +15,7 @@ var config = {
         membershipInfo: [],
         searchTerm: "",
         platform:"console",
-        pcUserSearchResults: [],
+        userSearchResults: [],
         selectedBlizzardUserMembershipId: 0,
         errorMessage: "",
         resolvedMemberships: []
