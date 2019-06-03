@@ -1,6 +1,1 @@
-
-
-
-
-prepareConfig($, $(document));
-app = new Vue(config);
+dashboard = new Dashboard($);
