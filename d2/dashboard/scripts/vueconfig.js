@@ -113,18 +113,20 @@ function prepareConfig($, $document) {
         ).then(processor);
     });
 
-    config.methods.blizzardUserClicked = function(e) {
+    config.methods.userClicked = function(e) {
         e.preventDefault();
 
         var membershipId = $(e.target).attr("data-membership-id");
-        console.debug("Blizzard member: " + membershipId);
-        resolvePcUserMemberships(membershipId);
+        var membershipType = $(e.target).attr("data-membership-type");
+        console.debug("User member: " + membershipId);
+        config.data.userSearchResults = [];
+        resolveUserMemberships(membershipId, membershipType);
     };
 
-    var resolvePcUserMemberships = function(membershipId) {
+    var resolveUserMemberships = function(membershipId, membershipType) {
         config.data.resolvedMemberships = [];
         // membership is only valid for pc platform but can fetch other platform information weirdly
-        $.ajax(prepareGetParams("/User/GetMembershipsById/" + membershipId + "/4/", "/Platform")).then(function (response) {
+        $.ajax(prepareGetParams("/User/GetMembershipsById/" + membershipId + "/" + membershipType + "/", "/Platform")).then(function (response) {
             for(var i = 0; i < response.Response.destinyMemberships.length; i++) {
                 var dm = response.Response.destinyMemberships[i];
                 config.data.resolvedMemberships.push(dm);
@@ -238,7 +240,7 @@ function prepareConfig($, $document) {
     };
 
     config.methods.clearSearchData = function() {
-        config.data.pcUserSearchResults = [];
+        config.data.userSearchResults = [];
         config.data.activities = [];
         config.data.characterIds = [];
         config.data.membershipInfo = [];
@@ -260,30 +262,16 @@ function prepareConfig($, $document) {
                 var r = response.Response.results[i];
                 // Only way for blizzard
                 if(r.blizzardDisplayName !== undefined) {
-                    config.data.pcUserSearchResults.push(r);
+                    r.membershipType = 4;
+                    r.displayName = '[BNet] ' + r.blizzardDisplayName;
+                } else if( r.psnDisplayName !== undefined) {
+                    r.membershipType = 2;
+                    r.displayName = '[PSN] ' + r.psnDisplayName;
+                } else if( r.xboxDisplayName !== undefined) {
+                    r.membershipType = 1;
+                    r.displayName = '[XBL] ' + r.xboxDisplayName;
                 }
-            }
-
-            if(config.data.pcUserSearchResults.length === 0) {
-                // Unlikely but look for registered non pc users
-                callApi("SearchDestinyPlayer/-1/" + searchTerm + "/").then(function (result) {
-                    var playerFound = false;
-                    result.Response.forEach(function (membershipInfo) {
-                        // Add any additional data here
-                        // Load data for each membership information
-                        config.data.resolvedMemberships.push(membershipInfo);
-                        playerFound = true;
-                    });
-                    if (!playerFound) {
-                        setErrorMessage(
-                            "No data found for [" +
-                            config.data.searchTerm +
-                            "]. Either the player does not exist or there are no characters on this account."
-                        );
-                    } else {
-                        processResolvedMemberships();
-                    }
-                });
+                config.data.userSearchResults.push(r);
             }
         });
     };
