@@ -10,7 +10,7 @@
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous" />
 </head>
 <body>
-<div id="app">
+<div id="dashboard-app">
     <div class="guardian-input">
         <div class="search">
             <input type="text" name="guardian" id="guardian" v-model="searchTerm" placeholder="Search player" />
@@ -60,7 +60,7 @@
                                     <div v-bind:data-character-id="character.characterId" v-bind:class="character.loaded ? 'hidden' : 'loader'"></div>
                                 </td>
                                 <td v-bind:class="'emblem char-class-emblem-bg-' + character.characterId">
-                                    {{genderTypeMap.get(character.genderType)}} {{raceTypeMap.get(character.raceType)}} {{classTypeMap.get(character.classType)}}
+                                    {{character.genderTypeName }} {{character.raceTypeName}} {{character.classTypeName}}
                                 </td>
                                 <td>{{character.levelProgression.level}}</td>
                                 <td>{{character.light}}</td>
@@ -68,7 +68,7 @@
                                 <td>{{ character.stats['392767087'] }}</td>
                                 <td>{{ character.stats['1943323491'] }}</td>
                                 <td>{{ moment(character.dateLastPlayed).format("l LT") }}</td>
-                                <td>{{ getDurationFromMinutes(character.minutesPlayedTotal)}}</td>
+                                <td>{{ character.totalDurationPlayed }}</td>
                             </tr>
                             </tbody>
                         </table>
@@ -135,11 +135,12 @@
         </div>
     </div>
 </div>
-<script src="scripts/maps.js"></script>
-<script src="scripts/vars.js"></script>
-<script src="scripts/vueconfig.js"></script>
-<script src="scripts/charting.js"></script>
-<script src="scripts/script.js"></script>
+<!-- Debug
+<script src="scripts/script.debug.js"></script>
+end debug -->
+<!-- Prod-->
+<script src="scripts/script.min.js"></script>
+<!--end prod -->
 </body>
 
 </html>
