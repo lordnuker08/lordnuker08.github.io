@@ -1,4 +1,11 @@
-function Dashboard($) {
+import VueContainer from "./vue-container.js"
+import BungieApi from "./bungie-api.js"
+import ChartingContainer from "./charting-container.js"
+import Utils from "./utils.js"
+import DataManager from "./data-manager.js"
+import EventManager from "./event-manager.js"
+
+export default function Dashboard($) {
   "use strict";
   var vueContainer,
     bungieApi,

@@ -1,4 +1,6 @@
-function VueContainer(options) {
+import typeMaps from "./maps.js"
+
+export default function VueContainer(options) {
   "use strict";
 
   var jq = options.jq;
@@ -53,7 +55,7 @@ function VueContainer(options) {
         activity.characterId = characterId;
         activity.membershipType = membershipType;
         activity.isPvP =
-          pvpActivities.indexOf(activity.activityDetails.mode) !== -1;
+          typeMaps.pvpActivities.indexOf(activity.activityDetails.mode) !== -1;
         config.data.activities.push(activity);
       });
     }
@@ -289,19 +291,19 @@ function VueContainer(options) {
   };
 
   config.methods.getActivityType = function(activityHash) {
-    return activityTypeMap.get(activityHash);
+    return typeMaps.activityTypeMap.get(activityHash);
   };
 
   config.methods.getActivityModeTypes = function(activityModes) {
     var descriptions = [];
-    activityModes.forEach(function(mode) {
+    typeMaps.activityModes.forEach(function(mode) {
       descriptions.push(activitModeTypeMap.get(mode));
     });
     return descriptions.join(",");
   };
 
   config.methods.getActivityModeType = function(activityMode) {
-    return activityModeTypeMap.get(activityMode);
+    return typeMaps.activityModeTypeMap.get(activityMode);
   };
 
   config.methods.getDurationFromMinutes = options.utils.getDurationFromMinutes;

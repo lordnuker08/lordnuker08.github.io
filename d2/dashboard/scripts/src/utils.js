@@ -1,5 +1,5 @@
-function Utils() {
-    "use string";
+export default function Utils() {
+    "use strict";
 
     this.getDurationFromMinutes = function(minutes) {
         var d = Math.floor(minutes / 1440), // Days

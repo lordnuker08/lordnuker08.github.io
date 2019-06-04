@@ -1,4 +1,4 @@
-function ChartingContainer(options) {
+export default function ChartingContainer(options) {
   "use strict";
   var COLOR_RED = "rgb(255, 99, 132)",
     COLOR_BLUE = "rgb(54, 162, 235)",

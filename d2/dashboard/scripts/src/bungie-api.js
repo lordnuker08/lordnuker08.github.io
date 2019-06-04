@@ -1,4 +1,4 @@
-function BungieApi(options) {
+export default function BungieApi(options) {
     "use strict";
 
     var jq = options.jQuery;

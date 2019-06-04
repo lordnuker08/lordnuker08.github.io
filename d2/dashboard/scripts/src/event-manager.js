@@ -1,4 +1,4 @@
-function EventManager(options) {
+export default function EventManager(options) {
     var jq = options.jq;
     var NAMESPACE = ".ln08"; // :)
     var EVENT_LOAD_CHARACTER_DATA = "load_character_data" + NAMESPACE;

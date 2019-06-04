@@ -9,7 +9,7 @@ def value_cleanup(value) :
     return value.replace("\"", "\\\"")
 
 def create_map_definition(variable_name, map_values) :
-    return u'var ' + variable_name +  ' = new Map([' + u','.join(map_values)  + u']);'
+    return u'\t' + variable_name +  ' : new Map([' + u','.join(map_values)  + u']),'
 
 def get_type_name_map(items, type_key_name) :
     all_values = []
@@ -62,7 +62,7 @@ pvpActivityValuesFormatted = []
 for pvpActivityValue in pvpActivityValues :
     pvpActivityValuesFormatted.append(str(pvpActivityValue))
 
-pvpActivityModeValues = u'var pvpActivities=[' + u','.join(pvpActivityValuesFormatted) + u'];'
+pvpActivityModeValues = u'\tpvpActivities:[' + u', '.join(pvpActivityValuesFormatted) + u'],'
 
 activityModeValues = get_type_name_map(activityModes.items(), u'modeType')
 classValues = get_type_name_map(classDefinition.items(), u'classType')
@@ -70,6 +70,7 @@ genderValues = get_type_name_map(genderDefinition.items(), u'genderType')
 raceValues = get_type_name_map(raceDefinition.items(), u'raceType')
 
 with open('../dashboard/scripts/maps.js', 'w', encoding=fileEncoding) as outfile:
+    outfile.write(u'var typeMaps = { \n')
     outfile.write( create_map_definition(u'activityTypeMap', activityValues))
     outfile.write(u'\n')
     outfile.write( create_map_definition(u'activityModeTypeMap', activityModeValues) )
@@ -81,5 +82,5 @@ with open('../dashboard/scripts/maps.js', 'w', encoding=fileEncoding) as outfile
     outfile.write( create_map_definition(u'raceTypeMap', raceValues) )
     outfile.write(u'\n')
     outfile.write(pvpActivityModeValues)
-
+    outfile.write(u'\n}\n export default {typeMaps}')
 print('Done')
