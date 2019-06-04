@@ -735,8 +735,8 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
     this.getBungieSiteUrl = function() {
       return bungieSite;
     };
-    this.getMembershipById = function(membershipId) {
-      return jq.ajax(prepareGetParams("/User/GetMembershipsById/" + membershipId + "/4/", "/Platform"));
+    this.getMembershipById = function(membershipId, membershipType) {
+      return jq.ajax(prepareGetParams("/User/GetMembershipsById/" + membershipId + "/" + membershipType + "/", "/Platform"));
     };
     this.loadFullProfile = function(membershipInfo) {
       return callApi(membershipInfo.membershipType + "/Profile/" + membershipInfo.membershipId + "/?components\x3d100,200");
@@ -1034,7 +1034,7 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
     var bungieApi = options.bungieApi;
     var typeMaps = new module$src$maps["default"];
     var utils = new module$src$utils["default"];
-    var config = {el:options.appContainer, data:{activetab:1, charactersInfo:[], activities:[], membershipInfo:[], searchTerm:"", pcUserSearchResults:[], selectedBlizzardUserMembershipId:0, errorMessage:"", resolvedMemberships:[]}, computed:{isSearchDisabled:function() {
+    var config = {el:options.appContainer, data:{activetab:1, charactersInfo:[], activities:[], membershipInfo:[], searchTerm:"", userSearchResults:[], selectedBlizzardUserMembershipId:0, errorMessage:"", resolvedMemberships:[]}, computed:{isSearchDisabled:function() {
       return this.searchTerm.trim().length > 0;
     }, isLoadingComplete:function() {
       for (var c = 0; c < this.charactersInfo.length; c++) {
@@ -1088,15 +1088,17 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
       };
       bungieApi.getActivities(platformId, membershipInfo.membershipId, character.characterId, maxRecord, config.data.membershipInfo[data.membershipInfoIndex].characters[data.characterIndex].activitiesPage).then(processor);
     });
-    config.methods.blizzardUserClicked = function(e) {
+    config.methods.userClicked = function(e) {
       e.preventDefault();
       var membershipId = $(e.target).attr("data-membership-id");
-      console.debug("Blizzard member: " + membershipId);
-      resolvePcUserMemberships(membershipId);
+      var membershipType = $(e.target).attr("data-membership-type");
+      console.debug("User member: " + membershipId);
+      config.data.userSearchResults = [];
+      resolveUserMemberships(membershipId, membershipType);
     };
-    var resolvePcUserMemberships = function(membershipId) {
+    var resolveUserMemberships = function(membershipId, membershipType) {
       config.data.resolvedMemberships = [];
-      bungieApi.getMembershipById(membershipId).then(function(response) {
+      bungieApi.getMembershipById(membershipId, membershipType).then(function(response) {
         for (var i = 0; i < response.Response.destinyMemberships.length; i++) {
           var dm = response.Response.destinyMemberships[i];
           config.data.resolvedMemberships.push(dm);
@@ -1166,7 +1168,7 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
       });
     };
     config.methods.clearSearchData = function() {
-      config.data.pcUserSearchResults = [];
+      config.data.userSearchResults = [];
       config.data.activities = [];
       config.data.characterIds = [];
       config.data.membershipInfo = [];
@@ -1183,22 +1185,20 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
         for (var i = 0; i < response.Response.results.length; i++) {
           var r = response.Response.results[i];
           if (r.blizzardDisplayName !== undefined) {
-            config.data.pcUserSearchResults.push(r);
-          }
-        }
-        if (config.data.pcUserSearchResults.length === 0) {
-          bungieApi.searchDestinyPlayers(searchTerm).then(function(result) {
-            var playerFound = false;
-            result.Response.forEach(function(membershipInfo) {
-              config.data.resolvedMemberships.push(membershipInfo);
-              playerFound = true;
-            });
-            if (!playerFound) {
-              setErrorMessage("No data found for [" + config.data.searchTerm + "]. Either the player does not exist or there are no characters on this account.");
+            r.membershipType = 4;
+            r.displayName = "[BNet] " + r.blizzardDisplayName;
+          } else {
+            if (r.psnDisplayName !== undefined) {
+              r.membershipType = 2;
+              r.displayName = "[PSN] " + r.psnDisplayName;
             } else {
-              processResolvedMemberships();
+              if (r.xboxDisplayName !== undefined) {
+                r.membershipType = 1;
+                r.displayName = "[XBL] " + r.xboxDisplayName;
+              }
             }
-          });
+          }
+          config.data.userSearchResults.push(r);
         }
       });
     };

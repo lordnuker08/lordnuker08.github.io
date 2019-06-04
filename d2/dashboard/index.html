@@ -19,8 +19,8 @@
                 {{errorMessage}}
             </p>
             <ul class="players-found">
-                <li v-for="user in pcUserSearchResults">
-                    <a href="#"  v-bind:data-membership-id="user.membershipId" v-on:click="blizzardUserClicked">{{user.blizzardDisplayName}}</a>
+                <li v-for="user in userSearchResults">
+                    <a href="#"  v-bind:data-membership-type="user.membershipType"  v-bind:data-membership-id="user.membershipId" v-on:click="userClicked">{{user.displayName}}</a>
                 </li>
             </ul>
         </div>
@@ -135,12 +135,12 @@
         </div>
     </div>
 </div>
-<!-- Debug -->
+<!-- Debug
 <script src="scripts/script.debug.js"></script>
-<!-- end debug -->
-<!-- Prod
+end debug -->
+<!-- Prod-->
 <script src="scripts/script.min.js"></script>
--->
+<!--end prod -->
 </body>
 
 </html>

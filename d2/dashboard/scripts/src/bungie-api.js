@@ -72,7 +72,7 @@ export default function BungieApi(options) {
         "/Account/" +
         membershipId +
         "/Character/" +
-        ccharacterId +
+        characterId +
         "/Stats/Activities/?mode=None&count=" +
         maxRecords +
         "&page=" +
@@ -84,10 +84,10 @@ export default function BungieApi(options) {
     return bungieSite;
   };
 
-  this.getMembershipById = function(membershipId) {
+  this.getMembershipById = function(membershipId, membershipType) {
     return jq.ajax(
       prepareGetParams(
-        "/User/GetMembershipsById/" + membershipId + "/4/",
+        "/User/GetMembershipsById/" + membershipId + "/" + membershipType + "/",
         "/Platform"
       )
     );
