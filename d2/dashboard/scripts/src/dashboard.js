@@ -1,9 +1,9 @@
-import VueContainer from "./vue-container.js"
-import BungieApi from "./bungie-api.js"
-import ChartingContainer from "./charting-container.js"
-import Utils from "./utils.js"
-import DataManager from "./data-manager.js"
-import EventManager from "./event-manager.js"
+import VueContainer from "./vue-container.js";
+import BungieApi from "./bungie-api.js";
+import ChartingContainer from "./charting-container.js";
+import Utils from "./utils.js";
+import DataManager from "./data-manager.js";
+import EventManager from "./event-manager.js";
 
 export default function Dashboard($) {
   "use strict";
@@ -21,11 +21,13 @@ export default function Dashboard($) {
   vueContainer = new VueContainer({
     jq: $,
     bungieApi: bungieApi,
-    appContainer: "dashboard-app",
+    appContainer: "#dashboard-app",
     utils: utils,
-    eventManager: eventManager
+    eventManager: eventManager,
+    href: window.location.href
   });
 
+  bungieApi.setErrorDisplayHandler(vueContainer.setErrorMessage);
   dataManager = new DataManager({
     getActivities: vueContainer.getAllActivities
   });
@@ -44,4 +46,7 @@ export default function Dashboard($) {
   this.vueContainer = vueContainer;
   this.chartingContainer = chartingContainer;
   this.utils = utils;
+
+  //window.vueContainer = this.vueContainer;
+  //window.chartingContainer = this.chartingContainer;
 }

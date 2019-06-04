@@ -1,10 +1,11 @@
-import typeMaps from "./maps.js"
+import typeMaps from "./maps.js";
 
 export default function VueContainer(options) {
   "use strict";
 
   var jq = options.jq;
   var bungieApi = options.bungieApi;
+
   var config = {
     el: options.appContainer,
     data: {
@@ -74,56 +75,59 @@ export default function VueContainer(options) {
     });
   };
 
-  jq.on(options.eventManager.getCharacterDataLoadedEventName(), function(
-    event,
-    data
-  ) {
-    var membershipInfo = config.data.membershipInfo[data.membershipInfoIndex],
-      maxRecord = 250,
-      platformId = membershipInfo.membershipType,
-      character = membershipInfo.characters[data.characterIndex];
+  jq(document).on(
+    options.eventManager.getCharacterDataLoadedEventName(),
+    function(event, data) {
+      var membershipInfo = config.data.membershipInfo[data.membershipInfoIndex],
+        maxRecord = 250,
+        platformId = membershipInfo.membershipType,
+        character = membershipInfo.characters[data.characterIndex];
 
-    var processor = function(result) {
-      if (
-        result.Response &&
-        result.Response.activities &&
-        result.Response.activities.length > 0
-      ) {
-        storeActivityData(
+      var processor = function(result) {
+        if (
+          result.Response &&
+          result.Response.activities &&
+          result.Response.activities.length > 0
+        ) {
+          storeActivityData(
+            character.characterId,
+            membershipInfo.membershipType,
+            result.Response.activities
+          );
+          config.data.membershipInfo[data.membershipInfoIndex].characters[
+            data.characterIndex
+          ].activitiesPage++;
+          triggerLoadCharacterData(
+            data.characterIndex,
+            data.membershipInfoIndex
+          );
+        } else {
+          console.debug(
+            "Loaded " +
+              character.activitiesPage +
+              " page(s) of activites for chracter: " +
+              character.characterId
+          );
+          config.data.membershipInfo[data.membershipInfoIndex].characters[
+            data.characterIndex
+          ].loaded = true;
+          sortActivities();
+        }
+      };
+
+      bungieApi
+        .getActivities(
+          platformId,
+          membershipInfo.membershipId,
           character.characterId,
-          membershipInfo.membershipType,
-          result.Response.activities
-        );
-        config.data.membershipInfo[data.membershipInfoIndex].characters[
-          data.characterIndex
-        ].activitiesPage++;
-        triggerLoadCharacterData(data.characterIndex, data.membershipInfoIndex);
-      } else {
-        console.debug(
-          "Loaded " +
-            character.activitiesPage +
-            " page(s) of activites for chracter: " +
-            character.characterId
-        );
-        config.data.membershipInfo[data.membershipInfoIndex].characters[
-          data.characterIndex
-        ].loaded = true;
-        sortActivities();
-      }
-    };
-
-    bungieApi
-      .getActivities(
-        platformId,
-        membershipInfo.membershipId,
-        character.characterId,
-        maxRecord,
-        config.data.membershipInfo[data.membershipInfoIndex].characters[
-          data.characterIndex
-        ].activitiesPage
-      )
-      .then(processor);
-  });
+          maxRecord,
+          config.data.membershipInfo[data.membershipInfoIndex].characters[
+            data.characterIndex
+          ].activitiesPage
+        )
+        .then(processor);
+    }
+  );
 
   config.methods.blizzardUserClicked = function(e) {
     e.preventDefault();
@@ -331,5 +335,11 @@ export default function VueContainer(options) {
     config.methods.findPlayers();
   }
 
-  this.vueApp = new Vue(config);
+  this.config = config;
+  window.config = this.config;
+  this.vueApp = new Vue(window.config);
+
+  this.setErrorMessage = setErrorMessage;
+
+  window.vueApp = this.vueApp;
 }

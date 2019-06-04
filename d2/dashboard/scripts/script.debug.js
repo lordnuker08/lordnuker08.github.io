@@ -700,18 +700,21 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
     return BungieApi;
   }}});
   function BungieApi(options) {
-    var jq = options.jQuery;
+    var jq = options.jq;
     var api_key = window.location.href.indexOf("beta") > -1 ? "2dea235ddd854458ab0dae8adc2f0835" : "755e377b63b5405090a4e4d202a58537";
     var bungieSite = "https://www.bungie.net";
     var _errorDisplayHandler;
-    var ajaxError = function(xhr, textStatus, errorThrown) {
+    var errorDisplayHandler = function(errorMessage) {
       if (_errorDisplayHandler !== undefined) {
-        errorDisplayHandler(textStatus + " " + errorThrown);
+        _errorDisplayHandler(errorMessage);
       }
+    };
+    var ajaxError = function(xhr, textStatus, errorThrown) {
+      errorDisplayHandler(textStatus + " " + errorThrown);
     };
     var prepareGetParams = function(getUrl, baseOverride) {
       var base = baseOverride === undefined ? bungieSite + "/Platform/Destiny2/" : bungieSite + baseOverride;
-      setErrorMessage("");
+      errorDisplayHandler("");
       return {type:"GET", headers:{"X-API-Key":api_key}, error:ajaxError, url:base + getUrl};
     };
     var callApi = function(api) {
@@ -738,8 +741,8 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
     this.loadFullProfile = function(membershipInfo) {
       return callApi(membershipInfo.membershipType + "/Profile/" + membershipInfo.membershipId + "/?components\x3d100,200");
     };
-    this.setErrorDisplayHandler = function(errorDisplayHandler) {
-      _errorDisplayHandler = errorDisplayHandler;
+    this.setErrorDisplayHandler = function(handler) {
+      _errorDisplayHandler = handler;
     };
   }
 }, "src/bungie-api.js", []);
@@ -819,7 +822,7 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
       _self.dailyActivityChart = getDailyActivityChart();
       _self.pvpActivityChart = getPvPActivityChart();
     };
-    jq.on(options.eventManager.getRedrawChartsEventName(), function(event, data) {
+    jq(document).on(options.eventManager.getRedrawChartsEventName(), function(event, data) {
       drawActivitySummaryGraphs();
     });
   }
@@ -842,7 +845,8 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
     utils = new module$src$utils["default"];
     eventManager = new module$src$event_manager["default"]({jq:$});
     bungieApi = new module$src$bungie_api["default"]({jq:$});
-    vueContainer = new module$src$vue_container["default"]({jq:$, bungieApi:bungieApi, appContainer:"dashboard-app", utils:utils, eventManager:eventManager});
+    vueContainer = new module$src$vue_container["default"]({jq:$, bungieApi:bungieApi, appContainer:"#dashboard-app", utils:utils, eventManager:eventManager, href:window.location.href});
+    bungieApi.setErrorDisplayHandler(vueContainer.setErrorMessage);
     dataManager = new module$src$data_manager["default"]({getActivities:vueContainer.getAllActivities});
     chartingContainer = new module$src$charting_container["default"]({getActivities:vueContainer.getAllActivities, summaryChartElement:"summary-chart", pvpSummaryChartElement:"pvp-summary-chart", utils:utils, eventManager:eventManager, dataManager:dataManager, jq:$});
     this.bungieApi = bungieApi;
@@ -877,10 +881,10 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
     var EVENT_LOAD_CHARACTER_DATA = "load_character_data" + NAMESPACE;
     var EVENT_REDRAW_CHARTS = "redraw_chars" + NAMESPACE;
     this.triggerLoadCharacterData = function(eventData) {
-      jq.trigger(EVENT_LOAD_CHARACTER_DATA, {characterIndex:eventData.characterIndex, membershipInfoIndex:eventData.membershipInfoIndex});
+      jq(document).trigger(EVENT_LOAD_CHARACTER_DATA, {characterIndex:eventData.characterIndex, membershipInfoIndex:eventData.membershipInfoIndex});
     };
     this.triggerRedrawCharts = function(eventData) {
-      jq.trigger(EVENT_REDRAW_CHARTS, eventData);
+      jq(document).trigger(EVENT_REDRAW_CHARTS, eventData);
     };
     this.getCharacterDataLoadedEventName = function() {
       return EVENT_LOAD_CHARACTER_DATA;
@@ -969,7 +973,9 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
 $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
   "use strict";
   var module$src$dashboard = $$require("src/dashboard.js");
-  var dashboard = new module$src$dashboard["default"]($);
+  $(function() {
+    window.dashboard = new module$src$dashboard["default"]($);
+  });
 }, "src/script.js", ["src/dashboard.js"]);
 
 //./src/utils.js
@@ -1057,7 +1063,7 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
     var triggerLoadCharacterData = function(characterIndex, membershipInfoIndex) {
       options.eventManager.triggerLoadCharacterData({characterIndex:characterIndex, membershipInfoIndex:membershipInfoIndex});
     };
-    jq.on(options.eventManager.getCharacterDataLoadedEventName(), function(event, data) {
+    jq(document).on(options.eventManager.getCharacterDataLoadedEventName(), function(event, data) {
       var membershipInfo = config.data.membershipInfo[data.membershipInfoIndex], maxRecord = 250, platformId = membershipInfo.membershipType, character = membershipInfo.characters[data.characterIndex];
       var processor = function(result) {
         if (result.Response && result.Response.activities && result.Response.activities.length > 0) {
@@ -1209,7 +1215,11 @@ $jscomp.registerAndLoadModule(function($$require, $$exports, $$module) {
     if (config.data.searchTerm.length > 0) {
       config.methods.findPlayers();
     }
-    this.vueApp = new Vue(config);
+    this.config = config;
+    window.config = this.config;
+    this.vueApp = new Vue(window.config);
+    this.setErrorMessage = setErrorMessage;
+    window.vueApp = this.vueApp;
   }
 }, "src/vue-container.js", ["src/maps.js"]);
 

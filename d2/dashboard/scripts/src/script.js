@@ -1,2 +1,4 @@
-import Dashboard from "./dashboard.js"
-var dashboard = new Dashboard($); // Main app
+import Dashboard from "./dashboard.js";
+$(function() {
+  window.dashboard = new Dashboard($); // Main app
+});

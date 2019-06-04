@@ -213,7 +213,10 @@ export default function ChartingContainer(options) {
     _self.pvpActivityChart = getPvPActivityChart();
   };
 
-  jq.on(options.eventManager.getRedrawChartsEventName(), function(event, data) {
+  jq(document).on(options.eventManager.getRedrawChartsEventName(), function(
+    event,
+    data
+  ) {
     drawActivitySummaryGraphs();
   });
 }
