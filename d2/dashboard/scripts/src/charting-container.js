@@ -1,8 +1,11 @@
+import Utils from "./utils.js";
+
 export default function ChartingContainer(options) {
   "use strict";
   var COLOR_RED = "rgb(255, 99, 132)",
     COLOR_BLUE = "rgb(54, 162, 235)",
     COLOR_GREEN = "rgb(12, 255, 132)";
+  var utils = new Utils();
 
   var jq = options.jq;
 
@@ -24,13 +27,13 @@ export default function ChartingContainer(options) {
 
     var summarizedActivities = summarizeByDate();
     // convert to array
-    var dailyActivityChartData = options.utils.objectToArray(
+    var dailyActivityChartData = utils.objectToArray(
       summarizedActivities,
       function(item) {
         return {
-          date: item,
-          count: details.count,
-          time: details.time
+          date: item.date,
+          count: item.count,
+          time: item.time
         };
       }
     );
@@ -67,7 +70,7 @@ export default function ChartingContainer(options) {
               ticks: {
                 // Change to hours and minutes
                 callback: function(value, index, values) {
-                  return options.utils.minutesToHours(value);
+                  return utils.minutesToHours(value);
                 }
               }
             }
@@ -80,14 +83,14 @@ export default function ChartingContainer(options) {
           {
             label: "Total Daily Activities",
             borderColor: COLOR_RED,
-            backgroundColor: COLOR_BLUE,
+            backgroundColor: COLOR_RED,
             fill: false,
             yAxisID: "y-axis-activity-count",
             data: []
           },
           {
             label: "Time Played (minutes)",
-            borderColor: COLOR_RED,
+            borderColor: COLOR_BLUE,
             backgroundColor: COLOR_BLUE,
             fill: false,
             yAxisID: "y-axis-time-played",
@@ -141,9 +144,9 @@ export default function ChartingContainer(options) {
       summarizedPvPActivities,
       function(item) {
         return {
-          date: item,
-          won: pvpActivityDetail.won,
-          lost: pvpActivityDetail.lost
+          date: item.date,
+          won: item.won,
+          lost: item.lost
         };
       }
     );

@@ -1,10 +1,13 @@
-import typeMaps from "./maps.js";
+import TypeMaps from "./maps.js";
+import Utils from "./utils.js";
 
 export default function VueContainer(options) {
   "use strict";
 
   var jq = options.jq;
   var bungieApi = options.bungieApi;
+  var typeMaps = new TypeMaps();
+  var utils = new Utils();
 
   var config = {
     el: options.appContainer,
@@ -230,7 +233,14 @@ export default function VueContainer(options) {
           membershipInfo,
           result.Response.characters.data
         );
-        config.data.charactersInfo.push(...membershipInfo.characters);
+        for(var i =0; i < membershipInfo.characters.length; i++) {
+          var character = membershipInfo.characters[i];
+          character.genderTypeName = typeMaps.genderTypeMap.get(character.genderType);
+          character.raceTypeName = typeMaps.raceTypeMap.get(character.raceType);
+          character.classTypeName = typeMaps.classTypeMap.get(character.classType);
+          character.totalDurationPlayed = utils.getDurationFromMinutes(character.minutesPlayedTotal);
+          config.data.charactersInfo.push(character);
+        }
         createCharacterDynamicCss(membershipInfo);
 
         // Save membership info
@@ -310,7 +320,7 @@ export default function VueContainer(options) {
     return typeMaps.activityModeTypeMap.get(activityMode);
   };
 
-  config.methods.getDurationFromMinutes = options.utils.getDurationFromMinutes;
+  //config.methods.getDurationFromMinutes = utils.getDurationFromMinutes;
 
   config.methods.drawActivitySummaryGraphs = function() {
     options.eventManager.triggerRedrawCharts();

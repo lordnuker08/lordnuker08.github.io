@@ -60,7 +60,7 @@
                                     <div v-bind:data-character-id="character.characterId" v-bind:class="character.loaded ? 'hidden' : 'loader'"></div>
                                 </td>
                                 <td v-bind:class="'emblem char-class-emblem-bg-' + character.characterId">
-                                    {{genderTypeMap.get(character.genderType)}} {{raceTypeMap.get(character.raceType)}} {{classTypeMap.get(character.classType)}}
+                                    {{character.genderTypeName }} {{character.raceTypeName}} {{character.classTypeName}}
                                 </td>
                                 <td>{{character.levelProgression.level}}</td>
                                 <td>{{character.light}}</td>
@@ -68,7 +68,7 @@
                                 <td>{{ character.stats['392767087'] }}</td>
                                 <td>{{ character.stats['1943323491'] }}</td>
                                 <td>{{ moment(character.dateLastPlayed).format("l LT") }}</td>
-                                <td>{{ getDurationFromMinutes(character.minutesPlayedTotal)}}</td>
+                                <td>{{ character.totalDurationPlayed }}</td>
                             </tr>
                             </tbody>
                         </table>

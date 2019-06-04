@@ -7,14 +7,8 @@ import EventManager from "./event-manager.js";
 
 export default function Dashboard($) {
   "use strict";
-  var vueContainer,
-    bungieApi,
-    chartingContainer,
-    utils,
-    eventManager,
-    dataManager;
+  var vueContainer, bungieApi, chartingContainer, eventManager, dataManager;
 
-  utils = new Utils();
   eventManager = new EventManager({ jq: $ });
 
   bungieApi = new BungieApi({ jq: $ });
@@ -22,7 +16,6 @@ export default function Dashboard($) {
     jq: $,
     bungieApi: bungieApi,
     appContainer: "#dashboard-app",
-    utils: utils,
     eventManager: eventManager,
     href: window.location.href
   });
@@ -36,17 +29,18 @@ export default function Dashboard($) {
     getActivities: vueContainer.getAllActivities,
     summaryChartElement: "summary-chart",
     pvpSummaryChartElement: "pvp-summary-chart",
-    utils: utils,
     eventManager: eventManager,
     dataManager: dataManager,
     jq: $
   });
 
+  var _self = this;
   this.bungieApi = bungieApi;
   this.vueContainer = vueContainer;
   this.chartingContainer = chartingContainer;
-  this.utils = utils;
 
-  //window.vueContainer = this.vueContainer;
-  //window.chartingContainer = this.chartingContainer;
+  window.appContainers = {
+    vueContainer: _self.vueContainer,
+    chartingContainer: _self.chartingContainer
+  };
 }
