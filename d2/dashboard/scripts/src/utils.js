@@ -27,7 +27,7 @@ export default function Utils() {
 
     for (var o in obj) {
       var item = obj[o];
-      output.push(transformer !== undefined ? transformer(item) : item);
+      output.push(transformer !== undefined ? transformer(item, o) : item);
     }
     return output;
   };

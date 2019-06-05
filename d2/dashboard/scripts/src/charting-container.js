@@ -29,9 +29,9 @@ export default function ChartingContainer(options) {
     // convert to array
     var dailyActivityChartData = utils.objectToArray(
       summarizedActivities,
-      function(item) {
+      function(item, index) {
         return {
-          date: item.date,
+          date: index,
           count: item.count,
           time: item.time
         };
@@ -142,9 +142,9 @@ export default function ChartingContainer(options) {
 
     var pvpActivityChartData = utils.objectToArray(
       summarizedPvPActivities,
-      function(item) {
+      function(item, index) {
         return {
-          date: item.date,
+          date: index,
           won: item.won,
           lost: item.lost
         };
