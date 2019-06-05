@@ -81,6 +81,7 @@
                             </tbody>
                         </table>
                     </div>
+                    <p v-bind:class="activities.length === 0 ? 'hidden' : ''">Activities Loaded: {{activities.length}}</p>
                 </div>
             </div>
             <div v-if="activetab === 2" class="tabcontent">
