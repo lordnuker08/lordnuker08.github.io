@@ -2,5 +2,5 @@
 .idea/
 
 #d2 raw resources
-d2/dashboard/resources/raw
-d2/dashboard/resources/parsed
+d2/raw
+d2/parsed

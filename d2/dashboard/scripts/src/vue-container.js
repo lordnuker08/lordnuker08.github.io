@@ -145,16 +145,18 @@ export default function VueContainer(options) {
   var resolveUserMemberships = function(membershipId, membershipType) {
     config.data.resolvedMemberships = [];
     // membership is only valid for pc platform but can fetch other platform information weirdly
-    bungieApi.getMembershipById(membershipId, membershipType).then(function(response) {
-      for (var i = 0; i < response.Response.destinyMemberships.length; i++) {
-        var dm = response.Response.destinyMemberships[i];
-        config.data.resolvedMemberships.push(dm);
-      }
+    bungieApi
+      .getMembershipById(membershipId, membershipType)
+      .then(function(response) {
+        for (var i = 0; i < response.Response.destinyMemberships.length; i++) {
+          var dm = response.Response.destinyMemberships[i];
+          config.data.resolvedMemberships.push(dm);
+        }
 
-      if (config.data.resolvedMemberships.length > 0) {
-        processResolvedMemberships();
-      }
-    });
+        if (config.data.resolvedMemberships.length > 0) {
+          processResolvedMemberships();
+        }
+      });
   };
 
   var processResolvedMemberships = function() {
@@ -235,12 +237,18 @@ export default function VueContainer(options) {
           membershipInfo,
           result.Response.characters.data
         );
-        for(var i =0; i < membershipInfo.characters.length; i++) {
+        for (var i = 0; i < membershipInfo.characters.length; i++) {
           var character = membershipInfo.characters[i];
-          character.genderTypeName = typeMaps.genderTypeMap.get(character.genderType);
+          character.genderTypeName = typeMaps.genderTypeMap.get(
+            character.genderType
+          );
           character.raceTypeName = typeMaps.raceTypeMap.get(character.raceType);
-          character.classTypeName = typeMaps.classTypeMap.get(character.classType);
-          character.totalDurationPlayed = utils.getDurationFromMinutes(character.minutesPlayedTotal);
+          character.classTypeName = typeMaps.classTypeMap.get(
+            character.classType
+          );
+          character.totalDurationPlayed = utils.getDurationFromMinutes(
+            character.minutesPlayedTotal
+          );
           config.data.charactersInfo.push(character);
         }
         createCharacterDynamicCss(membershipInfo);
@@ -277,18 +285,36 @@ export default function VueContainer(options) {
       for (var i = 0; i < response.Response.results.length; i++) {
         var r = response.Response.results[i];
         // Only way for blizzard
-        if(r.blizzardDisplayName !== undefined) {
+        if (r.blizzardDisplayName !== undefined) {
           r.membershipType = 4;
-          r.displayName = '[BNet] ' + r.blizzardDisplayName;
-        } else if( r.psnDisplayName !== undefined) {
+          r.displayName = "[BNet] " + r.blizzardDisplayName;
+        } else if (r.psnDisplayName !== undefined) {
           r.membershipType = 2;
-          r.displayName = '[PSN] ' + r.psnDisplayName;
-        } else if( r.xboxDisplayName !== undefined) {
+          r.displayName = "[PSN] " + r.psnDisplayName;
+        } else if (r.xboxDisplayName !== undefined) {
           r.membershipType = 1;
-          r.displayName = '[XBL] ' + r.xboxDisplayName;
+          r.displayName = "[XBL] " + r.xboxDisplayName;
         }
 
+        if (r.membershipType !== undefined) {
           config.data.userSearchResults.push(r);
+        }
+      }
+
+      // Call other API to
+      if (config.data.userSearchResults.length === 0) {
+        bungieApi.searchDestinyPlayers(searchTerm).then(function(response) {
+          response.Response.forEach(function(member) {
+            config.data.resolvedMemberships.push(member);
+          });
+
+          if(config.data.resolvedMemberships.length === 0) {
+            // No records found
+            setErrorMessage("No match found for the search term. Please check the user name and try again.")
+          } else {
+            processResolvedMemberships();
+          }
+        });
       }
     });
   };
@@ -334,10 +360,7 @@ export default function VueContainer(options) {
     config.methods.findPlayers();
   }
 
-
-
   this.config = config;
-
 
   window.config = this.config;
   this.vueApp = new Vue(window.config);
