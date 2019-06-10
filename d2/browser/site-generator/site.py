@@ -4,7 +4,7 @@ import os
 fileEncoding = 'utf-8'
 parsedResources = '../../parsed/'
 scriptsSrc = '../data/'
-features = ['DestinyLoreDefinition', 'DestinyRecordDefinition']
+features = ['DestinyLoreDefinition', 'DestinyRecordDefinition', 'DestinyCollectibleDefinition']
 mapformat = u"[{},\"{}\"]"
 
 def value_cleanup(value) :
