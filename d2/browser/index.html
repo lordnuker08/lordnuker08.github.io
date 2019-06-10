@@ -1,0 +1,40 @@
+<html xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
+<head>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <link rel="stylesheet" href="main.css" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-141526937-1"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-141526937-1');
+    </script>
+</head>
+<body>
+<div id="browser-app">
+    <div class="category" id="lore" data-source="DestinyLoreDefinition">
+        <div class="list">
+            <input type="text" placeholder="Filter Lore" id="filter-lore" name="filter-lore"/>
+            <ul class="searchable-list lore">
+                <li v-for="item in loreDefinition.list">
+                    {{item.n}}
+                </li>
+            </ul>
+        </div>
+        <div class="details">
+
+        </div>
+    </div>
+</div>
+<!-- Debug
+<script src="scripts/script.debug.js"></script>
+<script src="scripts/script.min.js"></script>
+end debug -->
+
+<script src="scripts/script.debug.min.js"></script>
+
+</body>
+
+</html>
