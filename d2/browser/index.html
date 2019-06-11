@@ -1,5 +1,8 @@
 <html xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
+    <meta charset="UTF-8"/>
+    <title>LordNuker08's Destiny Manifest Browser</title>
+    <meta name="description" content="Server-less browser for Destiny manifest files.">
     <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
     <script src="https://cdn.jsdelivr.net/npm/vue"></script>
     <link rel="stylesheet" href="main.css" />
@@ -13,37 +16,46 @@
     </script>
 </head>
 <body>
-<div id="browser-app">
-    <div class="category datalist js-datalist" id="lores" data-source="DestinyLoreDefinition">
-        <div class="list">
-            <input type="text" placeholder="Filter Lore" id="filter-lore" name="filter-lore"/>
-            <ul class="searchable-list lore">
-                <li v-for="item in loreDefinition.list">
-                    <a v-bind:data-hash="item.h" href="#"  v-on:click="listItemClicked(loreDefinition, $event)">{{item.n}}</a>
-                </li>
-            </ul>
+<div id="browser-app" class="page">
+    <div class="header">
+        <div class="navigation"></div>
+        <div class="title"><h1>LordNuker08's Destiny Manifest Browser</h1></div>
+    </div>
+    <div class="content">
+        <div class="category datalist js-datalist" id="lores" data-source="DestinyLoreDefinition">
+            <div class="list">
+                <input type="text" placeholder="Filter Lore" id="filter-lore" name="filter-lore"/>
+                <ul class="searchable-list lore">
+                    <li v-for="item in loreDefinition.list">
+                        <a v-bind:data-hash="item.h" href="#"  v-on:click="listItemClicked(loreDefinition, $event)">{{item.n}}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="details">
+                <h2>{{loreDefinition.selected.name}}</h2>
+                <em>{{loreDefinition.selected.subtitle}}</em>
+                <pre>{{loreDefinition.selected.description}}</pre>
+            </div>
         </div>
-        <div class="details">
-            <h2>{{loreDefinition.selected.name}}</h2>
-            <em>{{loreDefinition.selected.subtitle}}</em>
-            <pre>{{loreDefinition.selected.description}}</pre>
+        <div class="category datalist js-datalist" id="collectibles" data-source="DestinyCollectibleDefinition">
+            <div class="list">
+                <input type="text" placeholder="Filter Collectible" id="filter-collectible" name="filter-collectible"/>
+                <ul class="searchable-list collectible">
+                    <li v-for="item in collectibleDefinition.list">
+                        <a v-bind:data-hash="item.h" href="#"  v-on:click="listItemClicked(collectibleDefinition, $event)">{{item.n}}</a>
+                    </li>
+                </ul>
+            </div>
+            <div class="details">
+                <h2>{{collectibleDefinition.selected.name}}</h2>
+                <pre>{{collectibleDefinition.selected.description}}</pre>
+                <img v-bind:alt="collectibleDefinition.selected.name" v-bind:src="collectibleDefinition.selected.iconPath"/>
+            </div>
         </div>
     </div>
+    <div class="footer">
+        <div class="legal">
 
-
-    <div class="category datalist js-datalist" id="collectibles" data-source="DestinyCollectibleDefinition">
-        <div class="list">
-            <input type="text" placeholder="Filter Collectible" id="filter-collectible" name="filter-collectible"/>
-            <ul class="searchable-list collectible">
-                <li v-for="item in collectibleDefinition.list">
-                    <a v-bind:data-hash="item.h" href="#"  v-on:click="listItemClicked(collectibleDefinition, $event)">{{item.n}}</a>
-                </li>
-            </ul>
-        </div>
-        <div class="details">
-            <h2>{{collectibleDefinition.selected.name}}</h2>
-            <pre>{{collectibleDefinition.selected.description}}</pre>
-            <img v-bind:alt="collectibleDefinition.selected.name" v-bind:src="collectibleDefinition.selected.iconPath"/>
         </div>
     </div>
 </div>
