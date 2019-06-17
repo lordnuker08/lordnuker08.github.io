@@ -1,13 +1,20 @@
-<!DOCTYPE html>
-<html lang="en">
+<html xmlns:v-on="http://www.w3.org/1999/xhtml" xmlns:v-bind="http://www.w3.org/1999/xhtml">
 <head>
-    <meta charset="UTF-8">
-    <title>LordNuker08's Game Pages</title>
+    <script src="https://code.jquery.com/jquery-3.4.1.min.js" integrity="sha256-CSXorXvZcTkaix6Yvo6HppcZGetbYMGWSFlBw8HfCJo=" crossorigin="anonymous"></script>
+    <script src="https://cdn.jsdelivr.net/npm/vue"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.24.0/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.js" integrity="sha256-Uv9BNBucvCPipKQ2NS9wYpJmi8DTOEfTA/nH2aoJALw=" crossorigin="anonymous"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.bundle.min.js" integrity="sha256-xKeoJ50pzbUGkpQxDYHD7o7hxe0LaOGeguUidbq6vis=" crossorigin="anonymous"></script>
+    <link rel="stylesheet" href="main.css" />
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/Chart.js/2.8.0/Chart.min.css" integrity="sha256-aa0xaJgmK/X74WM224KMQeNQC2xYKwlAt08oZqjeF0E=" crossorigin="anonymous" />
+    <!-- Global site tag (gtag.js) - Google Analytics -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=UA-141526937-1"></script>
     <script>
-        (adsbygoogle = window.adsbygoogle || []).push({
-            google_ad_client: "ca-pub-1921194463339642",
-            enable_page_level_ads: true
-        });
+        window.dataLayer = window.dataLayer || [];
+        function gtag(){dataLayer.push(arguments);}
+        gtag('js', new Date());
+        gtag('config', 'UA-141526937-1');
     </script>
     <script async src="https://pagead2.googlesyndication.com/pagead/js/adsbygoogle.js"></script>
     <script>
@@ -18,22 +25,141 @@
     </script>
 </head>
 <body>
-    <h1>LordNuker08's Game Pages</h1>
+<div id="dashboard-app">
+    <div class="guardian-input">
+        <div class="search">
+            <input type="text" name="guardian" id="guardian" v-model="searchTerm" placeholder="Search player" />
+            <input type="submit" v-on:click="findPlayers" name="go" id="go" value="Search"/>
+            <p id="error-message">
+                {{errorMessage}}
+            </p>
+            <ul class="players-found">
+                <li v-for="user in userSearchResults">
+                    <a href="#"  v-bind:data-membership-type="user.membershipType"  v-bind:data-membership-id="user.membershipId" v-on:click="userClicked">{{user.displayName}}</a>
+                </li>
+            </ul>
+        </div>
+    </div>
+    <hr/>
+    <div id="app-tabs" v-bind:class=" charactersInfo.length > 0 ? 'container' : 'hidden' ">
+        <div class="tabs">
+            <a v-on:click="activetab=1" v-bind:class="[ activetab === 1 ? 'active' : '' ]">Player Info</a>
+            <a v-on:click="activetab=2" v-bind:class="[ (activetab === 2 || !isLoadingComplete) ? 'active' : '' ]">Activities</a>
+            <a v-on:click="chartTabClicked" v-bind:class="[ (activetab === 3 || !isLoadingComplete) ? 'active' : '' ]">Charts</a>
+        </div>
 
-    <p>
-        Welcome to game pages where you will find some helpful utilities to my favourite games. Select a game from the list below to see what utilities are available.
-    </p>
+        <div class="content">
+            <div v-if="activetab === 1" class="tabcontent">
+                <div class="player-info">
+                    <div class="table-wrapper">
+                        <table class="fl-table" id="characters">
+                            <thead>
+                            <tr>
+                                <th>Platform
+                                    <div v-bind:class="isLoadingComplete ? 'hidden' : 'loader'"></div>
+                                </th>
+                                <th>Character</th>
+                                <th>Level</th>
+                                <th>Power</th>
+                                <th>Mobility</th>
+                                <th>Resilience</th>
+                                <th>Recovery</th>
+                                <th>Last Played</th>
+                                <th>Total Time Played</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr v-for="character in charactersInfo">
+                                <td class="platform">
+                                    <img class="platform" alt="Platform Icon" v-bind:src="character.platformIconPath" />
+                                    <div v-bind:data-character-id="character.characterId" v-bind:class="character.loaded ? 'hidden' : 'loader'"></div>
+                                </td>
+                                <td v-bind:class="'emblem char-class-emblem-bg-' + character.characterId">
+                                    {{character.genderTypeName }} {{character.raceTypeName}} {{character.classTypeName}}
+                                </td>
+                                <td>{{character.levelProgression.level}}</td>
+                                <td>{{character.light}}</td>
+                                <td>{{ character.stats['2996146975'] }}</td>
+                                <td>{{ character.stats['392767087'] }}</td>
+                                <td>{{ character.stats['1943323491'] }}</td>
+                                <td>{{ moment(character.dateLastPlayed).format("l LT") }}</td>
+                                <td>{{ character.totalDurationPlayed }}</td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                    <p v-bind:class="activities.length === 0 ? 'hidden' : ''">Activities Loaded: {{activities.length}}</p>
+                </div>
+            </div>
+            <div v-if="activetab === 2" class="tabcontent">
+                <div class="table-wrapper">
+                    <table id="activities" class="fl-table">
+                        <thead>
+                        <tr>
+                            <th>Character</th>
+                            <th>Time</th>
+                            <th>Duration</th>
+                            <th>Mode</th>
+                            <th>Type</th>
+                            <th>Completed</th>
+                            <th>Kills</th>
+                            <th>Assists</th>
+                            <th>Deaths</th>
+                            <th>Opponents</th>
+                            <th>Efficiency</th>
+                            <th>K/D</th>
+                            <th>KA/D</th>
+                            <th>Score</th>
+                            <th>Team</th>
+                            <th>Players</th>
+                            <th>Team Score</th>
+                            <th>Standing</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr v-for="activity in activities">
+                            <td v-bind:class="'char char-class-' + activity.characterId"></td>
+                            <td class="time" v-bind:data-value="activity.period"> {{ moment(activity.period).format("l LT") }} </td>
+                            <td class="duration" v-bind:data-value="activity.values.timePlayedSeconds.basic.value">{{ activity.values.timePlayedSeconds.basic.displayValue }}</td>
+                            <td class="mode" v-bind:data-value="activity.activityDetails.mode">{{ getActivityModeType(activity.activityDetails.mode) }} </td>
+                            <td class="type" v-bind:data-value="activity.activityDetails.directorActivityHash"> {{ getActivityType(activity.activityDetails.directorActivityHash) }}</td>
+                            <td class="completed"> {{ activity.values.completed.basic.displayValue }} </td>
+                            <td class="kills"> {{ activity.values.kills.basic.displayValue }} </td>
+                            <td class="assists"> {{ activity.values.assists.basic.displayValue }} </td>
+                            <td class="deaths"> {{ activity.values.deaths.basic.displayValue }} </td>
+                            <td class="opponents"> {{ activity.values.opponentsDefeated.basic.displayValue }} </td>
+                            <td class="efficiency"> {{ activity.values.efficiency.basic.displayValue }} </td>
+                            <td class="kd"> {{ activity.values.killsDeathsRatio.basic.displayValue }} </td>
+                            <td class="kad"> {{ activity.values.killsDeathsAssists.basic.displayValue }} </td>
+                            <td class="score"> {{ activity.values.score.basic.displayValue }} </td>
+                            <td class="team"> {{ activity.values.team.basic.displayValue }} </td>
+                            <td class="players"> {{ activity.values.playerCount.basic.displayValue }} </td>
+                            <td class="teamscore"> {{ activity.values.teamScore.basic.displayValue }} </td>
+                            <td class="standing" v-bind:data-value="activity.values.standing ? activity.values.standing.basic.value : ''"> {{ activity.values.standing ? activity.values.standing.basic.displayValue : "" }} </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+            <div v-if="activetab === 3" class="tabcontent">
+                <div id="charts">
+                    <!--                    <button type="submit" name="draw-charts" id="draw-charts" v-on:click="drawActivitySummaryGraph">Draw Charts</button>-->
+                    <canvas id="summary-chart" height="400"></canvas>
+                    <canvas id="pvp-summary-chart" height="400"></canvas>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Debug
+<script src="scripts/script.debug.js"></script>
+end debug -->
+<!-- Prod-->
+<script src="scripts/script.min.js"></script>
+<!--end prod -->
+<div class="google-ads">
 
-    <h2><a href="d2/index.html">Destiny 2</a></h2>
-    <p>
-        Destiny 2 is a space FPS, MMORPG game which was launched in 2017 as a successor to Destiny (1). It is developbed by <a href="https://bungie.net">Bungie</a> and has a considerable
-        player base for a FPS game considering the current competition.
-    </p>
-
-    <h2>Why this site?</h2>
-    <p>
-        There are a lot of sites which give you stats about your game play and I use those sites. What I couldn't find is a site for details of activities with a lot of depth. I
-        have tried to make this site more detailed than the others. Yes, there is a lot of data to fetch but it is the only way to see it.
-    </p>
+</div>
 </body>
+
 </html>
