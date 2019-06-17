@@ -173,7 +173,7 @@ export default function VueContainer(options) {
         cd.membershipType = membershipInfo.membershipType;
         if (cd.membershipType === 4) {
           // Icon is not provided for blizzard... cheap!
-          cd.platformIconPath = "/images/logos/battlenet-icon.jpg";
+          cd.platformIconPath = "images/logos/battlenet-icon.jpg";
         }
         cd.activitiesPage = 0;
         cd.loaded = false;
