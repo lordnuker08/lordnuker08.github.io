@@ -5,7 +5,7 @@ export default function BungieApi(options) {
   var api_key =
     window.location.href.indexOf("beta") > -1
       ? "2dea235ddd854458ab0dae8adc2f0835"
-      : "755e377b63b5405090a4e4d202a58537";
+      : "0faed4d00f6f4387b19431dac296ca4f";
   var bungieSite = "https://www.bungie.net";
 
   var _errorDisplayHandler;
