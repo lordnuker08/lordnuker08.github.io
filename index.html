@@ -27,9 +27,24 @@
         });
     </script>
 </head>
-
 <body>
-<div id="dashboard-app">
+<div class="header">
+    <div class="row">
+    <div class="logo"></div>
+    <div class="top-banner"></div>
+    </div>
+    <div class="row">
+        <div class="menu">
+            <ul>
+                <li><a href="/">Home</a></li>
+                <li><a href="/browser/">Browser</a></li>
+            </ul>
+        </div>
+    </div>
+</div>
+<div class="content">
+    <div class="row">
+    <div id="dashboard-app">
     <div class="guardian-input">
         <div class="search">
             <input type="text" name="guardian" id="guardian" v-model="searchTerm" placeholder="Search player" />
@@ -155,15 +170,56 @@
         </div>
     </div>
 </div>
+    </div>
+    <div class="row">
+        <div id="how-to">
+            <h2>Welcome to Destiny Legends</h2>
+            <p>
+                Welcome Guardian!
+                <br/>
+                This tool allows you to load a lot of activities about your (or other) guardians.
+                <br/>
+                Lookup your guardian stats by platform and activities, see your day to day progress in one place and figure out vita stats
+                about the guardians.
+            </p>
+            <h3>Activities</h3>
+            <p>
+            Get a detailed list of activities on the activities tab above. Whether it's PvP or PvE, you can see a lot of details on when/where you
+            played and what was the outcome of your activity.
+            </p>
+            <h3>Charts</h3>
+            <p>
+                Easy way to visualise your time and activity display. This is helpful if you want to see details about streamers or content creators. The
+                more they play the more content they will have (hopefully).
+            </p>
+            <h3>How to Use?</h3>
+            <p>
+                Enter your player name in the field above and just hit the search button. If your player has an exact match, you will start seeing the characters and
+                activities load up. Be patient as Bungie's API isn't the fastest and it takes some time to load all the data.
+                <br/>
+                If your player matches multiple accounts, you will be presented with a list of players. Choose the player you are interested in and it will be loaded.
+                <br>
+                Once all the activities are there, you will be able to see the activities tab and charts tab.
+            </p>
+        </div>
+    </div>
+</div>
+<div class="footer">
+    <div class="row" id="g-ad-footer">
+
+    </div>
+    <div class="legals">
+        <hr/>
+        Copyright &copy; 2019. All rights reserved. All games, products and brands are copyrighted and trademarked
+    by their respective owners.
+    </div>
+</div>
 <!-- Debug
 <script src="scripts/script.debug.js"></script>
 end debug -->
 <!-- Prod-->
 <script src="scripts/script.min.js"></script>
 <!--end prod -->
-<div class="google-ads">
-
-</div>
 </body>
 
 </html>

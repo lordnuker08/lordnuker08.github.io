@@ -11,6 +11,7 @@ body{
     font-family: Helvetica;
     -webkit-text-size-adjust: 100%;
     -webkit-font-smoothing: antialiased;
+    background-color: rgb(56, 56, 56);;
 }
 h2{
     text-align: center;
@@ -160,13 +161,6 @@ ul.players-found {
 }
 
 
-/*
-Tabs
-https://vuejsexamples.com/tabbed-content-with-vue-js/
-
-Just removed the curves
- */
-
 .container {
     min-width: 420px;
     margin: 10px auto;
@@ -248,9 +242,93 @@ div.loader {
     display: none;
 }
 
-p#error-message {
+#error-message {
     padding: 5px 5px 5px 5px;
     display: inline;
     margin: 5px 5px;
     color: red;
+}
+
+div {
+    margin: 0 0 0 0;
+    padding: 0 0 0 0;
+}
+div.content {
+    color: white;
+}
+div.header {
+    width: 100%;
+}
+div.row {
+    display: block;
+}
+div.footer {
+    color: white ;
+}
+div.menu ul {
+    list-style: none;
+}
+
+div.menu ul li {
+    padding: 8px 8px 8px 8px;
+    margin-left: 10px;
+    color: #dd7f14;
+    background-color: #666666;
+    display: block;
+    float: left;
+}
+div.menu a {
+    text-decoration: none;
+    color: inherit;
+}
+div.logo {
+    background-color: white;
+    background-repeat: no-repeat;
+    background-image: url('images/logos/logo.png');
+}
+
+ul.searchable-list {
+    list-style: none;
+    height: 20rem;
+    overflow-y: scroll;
+    scroll-behavior: auto;
+    max-height: 100%;
+}
+
+ul.searchable-list li:hover {
+    background-color: #ebecf0;
+}
+
+ul.searchable-list li {
+    padding: 2px;
+    cursor: default;
+    color: black;
+}
+
+ul.searchable-list a {
+    color: black;
+    text-decoration: none;
+}
+
+div.category {
+    clear: both;
+}
+
+div.list {
+    float: left;
+    display: inline;
+    clear: none;
+    width: auto;
+    background-color: #f4f5f7;
+}
+
+div.details {
+    float: left;
+    display: inline;
+    width: 50rem;
+}
+
+div.details pre {
+    max-width: 100%;
+    white-space: pre-wrap;
 }
