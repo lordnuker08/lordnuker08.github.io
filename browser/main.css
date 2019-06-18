@@ -1,0 +1,38 @@
+ul.searchable-list {
+    list-style: none;
+    height: 20rem;
+    overflow-y: scroll;
+    scroll-behavior: auto;
+    max-height: 100%;
+}
+
+ul.searchable-list li:hover {
+    background: #f8f8f8;
+}
+
+ul.searchable-list li {
+    padding: 2px;
+    cursor: default;
+}
+
+div.category {
+    clear: both;
+}
+
+div.list {
+    float: left;
+    display: inline;
+    clear: none;
+    width: auto;
+}
+
+div.details {
+    float: left;
+    display: inline;
+    width: 50rem;
+}
+
+div.details pre {
+    max-width: 100%;
+    white-space: pre-wrap;
+}
