@@ -1,0 +1,25 @@
+{
+  "files": {
+    "main.css": "/static/css/main.23f5bada.chunk.css",
+    "main.js": "/static/js/main.439bf5a5.chunk.js",
+    "main.js.map": "/static/js/main.439bf5a5.chunk.js.map",
+    "runtime-main.js": "/static/js/runtime-main.e80a0fe5.js",
+    "runtime-main.js.map": "/static/js/runtime-main.e80a0fe5.js.map",
+    "static/js/2.1ce223c9.chunk.js": "/static/js/2.1ce223c9.chunk.js",
+    "static/js/2.1ce223c9.chunk.js.map": "/static/js/2.1ce223c9.chunk.js.map",
+    "index.html": "/index.html",
+    "precache-manifest.bdc956a90b61544378ba6f686592dae5.js": "/precache-manifest.bdc956a90b61544378ba6f686592dae5.js",
+    "service-worker.js": "/service-worker.js",
+    "static/css/main.23f5bada.chunk.css.map": "/static/css/main.23f5bada.chunk.css.map",
+    "static/js/2.1ce223c9.chunk.js.LICENSE.txt": "/static/js/2.1ce223c9.chunk.js.LICENSE.txt",
+    "static/media/home-hero-destiny.jpg": "/static/media/home-hero-destiny.c5f07fb0.jpg",
+    "static/media/logo.png": "/static/media/logo.9871c1a0.png",
+    "static/media/lore.256.144.jpg": "/static/media/lore.256.144.be0c7fac.jpg"
+  },
+  "entrypoints": [
+    "static/js/runtime-main.e80a0fe5.js",
+    "static/js/2.1ce223c9.chunk.js",
+    "static/css/main.23f5bada.chunk.css",
+    "static/js/main.439bf5a5.chunk.js"
+  ]
+}
