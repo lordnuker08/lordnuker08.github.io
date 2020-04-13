@@ -1,25 +1,25 @@
 {
   "files": {
     "main.css": "/static/css/main.23f5bada.chunk.css",
-    "main.js": "/static/js/main.444832a6.chunk.js",
-    "main.js.map": "/static/js/main.444832a6.chunk.js.map",
+    "main.js": "/static/js/main.61065a22.chunk.js",
+    "main.js.map": "/static/js/main.61065a22.chunk.js.map",
     "runtime-main.js": "/static/js/runtime-main.e80a0fe5.js",
     "runtime-main.js.map": "/static/js/runtime-main.e80a0fe5.js.map",
-    "static/js/2.cb419b8e.chunk.js": "/static/js/2.cb419b8e.chunk.js",
-    "static/js/2.cb419b8e.chunk.js.map": "/static/js/2.cb419b8e.chunk.js.map",
+    "static/js/2.d6501b50.chunk.js": "/static/js/2.d6501b50.chunk.js",
+    "static/js/2.d6501b50.chunk.js.map": "/static/js/2.d6501b50.chunk.js.map",
     "index.html": "/index.html",
-    "precache-manifest.c83b171995a074b14be1dc32744e6eca.js": "/precache-manifest.c83b171995a074b14be1dc32744e6eca.js",
+    "precache-manifest.517386d92f69cedb9065feeeaf687b68.js": "/precache-manifest.517386d92f69cedb9065feeeaf687b68.js",
     "service-worker.js": "/service-worker.js",
     "static/css/main.23f5bada.chunk.css.map": "/static/css/main.23f5bada.chunk.css.map",
-    "static/js/2.cb419b8e.chunk.js.LICENSE.txt": "/static/js/2.cb419b8e.chunk.js.LICENSE.txt",
+    "static/js/2.d6501b50.chunk.js.LICENSE.txt": "/static/js/2.d6501b50.chunk.js.LICENSE.txt",
     "static/media/home-hero-destiny.jpg": "/static/media/home-hero-destiny.c5f07fb0.jpg",
     "static/media/logo.png": "/static/media/logo.9871c1a0.png",
     "static/media/lore.256.144.jpg": "/static/media/lore.256.144.be0c7fac.jpg"
   },
   "entrypoints": [
     "static/js/runtime-main.e80a0fe5.js",
-    "static/js/2.cb419b8e.chunk.js",
+    "static/js/2.d6501b50.chunk.js",
     "static/css/main.23f5bada.chunk.css",
-    "static/js/main.444832a6.chunk.js"
+    "static/js/main.61065a22.chunk.js"
   ]
 }
