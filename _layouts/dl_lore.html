@@ -2,5 +2,12 @@
 layout: dl_home
 ---
 <div class="container lore">
-    {{content}}
+    <div class="row">
+        <div class="col-2">
+            {% include lore_index.html%}
+        </div>
+        <div class="col">
+            {{content}}
+        </div>
+    </div>
 </div>
