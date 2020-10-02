@@ -5,3 +5,4 @@ exclude:  [README.md]
 #baseurl: /
 plugins:
   - jekyll-redirect-from
+theme: jekyll-theme-slate
