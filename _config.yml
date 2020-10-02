@@ -1,0 +1,7 @@
+name: Destiny Legends
+highlighter: rouge
+markdown: kramdown
+exclude:  [README.md]
+#baseurl: /
+plugins:
+  - jekyll-redirect-from
