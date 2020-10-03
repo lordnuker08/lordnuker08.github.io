@@ -6,3 +6,5 @@ exclude:  [README.md]
 plugins:
   - jekyll-redirect-from
 theme: jekyll-theme-slate
+gems:
+  - jekyll-seo-tag
